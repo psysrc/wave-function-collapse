@@ -104,12 +104,10 @@ class Grid:
         return self._tile_superpositions
 
     def collapse(self) -> None:
-        print(self.pretty_print_grid_state())
         still_collapsing = True
 
         while still_collapsing:
             still_collapsing = self._collapse_lowest_entropy_tile_superposition()
-            print(self.pretty_print_grid_state())
 
     def _get_tile_superposition(self, coordinate: Coordinate) -> TileSuperposition:
         return self._tile_superpositions[coordinate[0]][coordinate[1]]
@@ -167,12 +165,9 @@ class Grid:
         if len(lowest_entropy_indices) == 0:
             return False
 
-        print(f"Lowest entropy is {lowest_entropy}: {lowest_entropy_indices}")
         lowest_entropy_index = random.choice(lowest_entropy_indices)
-        print(f"Chosen: {lowest_entropy_index}", end="")
 
         self._get_tile_superposition(lowest_entropy_index).collapse()
-        print(f" (collapsed to state {self._get_tile_superposition(lowest_entropy_index).get_collapsed_state().get_id()})")
         neighbours_to_propagate_to = self._get_valid_neighbours(lowest_entropy_index)
 
         while len(neighbours_to_propagate_to) > 0:
