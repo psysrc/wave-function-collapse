@@ -4,10 +4,22 @@ from wfc import basic
 
 def main() -> None:
     tiles: list[basic.Tile] = [
-        basic.Tile(1, {basic.Direction.LEFT: "a", basic.Direction.UP: "a", basic.Direction.DOWN: "a", basic.Direction.RIGHT: "a"}),
-        basic.Tile(2, {basic.Direction.LEFT: "c", basic.Direction.UP: "a", basic.Direction.DOWN: "b", basic.Direction.RIGHT: "c"}),
-        basic.Tile(3, {basic.Direction.LEFT: "b", basic.Direction.UP: "b", basic.Direction.DOWN: "b", basic.Direction.RIGHT: "b"}),
+        basic.Tile("grass",      {basic.Direction.LEFT: "g", basic.Direction.UP: "g", basic.Direction.DOWN: "g", basic.Direction.RIGHT: "g"}),
+        basic.Tile("end",        {basic.Direction.LEFT: "r", basic.Direction.UP: "g", basic.Direction.DOWN: "g", basic.Direction.RIGHT: "g"}),
+        basic.Tile("straight",   {basic.Direction.LEFT: "g", basic.Direction.UP: "r", basic.Direction.DOWN: "r", basic.Direction.RIGHT: "g"}),
+        basic.Tile("corner",     {basic.Direction.LEFT: "r", basic.Direction.UP: "r", basic.Direction.DOWN: "g", basic.Direction.RIGHT: "g"}),
+        basic.Tile("t-junction", {basic.Direction.LEFT: "r", basic.Direction.UP: "r", basic.Direction.DOWN: "g", basic.Direction.RIGHT: "r"}),
+        basic.Tile("cross",      {basic.Direction.LEFT: "r", basic.Direction.UP: "r", basic.Direction.DOWN: "r", basic.Direction.RIGHT: "r"}),
     ]
+
+    graphics: dict[basic.TileID, TileAsset] = {
+        "grass":      TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/grass-1.png"),
+        "end":        TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/end.png"),
+        "straight":   TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/straight.png"),
+        "corner":     TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/corner.png"),
+        "t-junction": TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/t-junction.png"),
+        "cross":      TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/cross.png"),
+    }
 
     grid_size = 4
     grid = basic.Grid(grid_size, tiles)
@@ -16,17 +28,11 @@ def main() -> None:
 
     print(grid.pretty_print_grid_state())
 
-    mapping: dict[basic.TileID, TileAsset] = {
-        1: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/air.png"),
-        2: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/water.png"),
-        3: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/earth.png"),
-    }
-
     grid_data: list[list[TileAsset]] = [[TileAsset() for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
         for col_idx, tile in enumerate(row):
-            grid_data[row_idx][col_idx] = mapping[tile.get_collapsed_state().get_id()]
+            grid_data[row_idx][col_idx] = graphics[tile.get_collapsed_state().get_id()]
 
     display_grid(grid_size, grid_size, grid_data)
 

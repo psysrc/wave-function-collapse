@@ -15,14 +15,14 @@ _opposite_direction = {
     Direction.RIGHT: Direction.LEFT,
 }
 
-TileID = int
-Socket = str
+TileID = int | str
+Socket = int | str
 Coordinate = tuple[int, int]
 Sockets = dict[Direction, Socket]
 
 
 class Tile:
-    def __init__(self, id: TileID, sockets: Sockets) -> None:
+    def __init__(self, id: TileID, sockets: Sockets, rotatable: bool = True, flippable: bool = True) -> None:
         self._id: TileID = id
         self._sockets: Sockets = sockets
 
