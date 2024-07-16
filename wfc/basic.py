@@ -70,9 +70,7 @@ class _InternalTile:
     socket_sets: DirectionalSocketSetMap
 
 
-def _create_internal_tiles_from_tile_definition(
-    tile_definition: TileDefinition,
-) -> list[_InternalTile]:
+def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
     if tile_definition.rotatable:
         raise NotImplementedError("Rotatable tiles are currently unsupported")  # TODO
 
@@ -230,12 +228,7 @@ class Grid:
         return self._tile_superpositions[coordinate[0]][coordinate[1]]
 
     def _is_coordinate_valid(self, coordinate: Coordinate) -> bool:
-        return (
-            coordinate[0] >= 0
-            and coordinate[0] < self._grid_size
-            and coordinate[1] >= 0
-            and coordinate[1] < self._grid_size
-        )
+        return coordinate[0] >= 0 and coordinate[0] < self._grid_size and coordinate[1] >= 0 and coordinate[1] < self._grid_size
 
     def _get_valid_neighbours(self, coordinate: Coordinate) -> dict[tuple[Coordinate, Direction], Coordinate]:
         """
