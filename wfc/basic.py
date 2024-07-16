@@ -39,10 +39,12 @@ class Tile:
 
 class TileSuperposition:
     def __init__(self, possibilities: list[Tile], weights: list[float] | None = None) -> None:
-        assert len(possibilities) > 0
+        if len(possibilities) == 0:
+            raise RuntimeError("Cannot create a superposition containing zero possibilities")
 
         if weights is not None:
-            assert len(possibilities) == len(weights)
+            if len(possibilities) != len(weights):
+                raise RuntimeError("Number of weights provided does not match number of possibilities")
         else:
             weights = [1.0] * len(possibilities)
 
@@ -90,7 +92,8 @@ class TileSuperposition:
     def collapse(self) -> None:
         """Collapse the superposition into a single known state."""
 
-        assert self.is_valid()
+        if not self.is_valid() or self.has_collapsed():
+            return
 
         weights = [w for (_, w) in self._possibilities_and_weights]
 
@@ -100,7 +103,12 @@ class TileSuperposition:
         return len(self._possibilities_and_weights)
 
     def get_collapsed_state(self) -> Tile:
-        assert self.has_collapsed()
+        if not self.is_valid():
+            raise RuntimeError("Cannot get collapsed state of an invalid supoerposition")
+
+        if not self.has_collapsed():
+            raise RuntimeError("Cannot get collapsed state of an uncollapsed superposition")
+
         return self._possibilities_and_weights[0][0]
 
 
@@ -161,7 +169,9 @@ class Grid:
 
     def find_lowest_entropy_tile_superposition(self) -> Coordinate | None:
         """
-        Return the tile coordinate that has the lowest entropy, or `None` if the grid is fully collapsed.
+        Return the tile coordinate that has the lowest entropy.
+
+        `None` is returned if the grid is fully collapsed, or contains an invalid superposition.
         """
 
         lowest_entropy_indices: list[Coordinate] = []
@@ -169,7 +179,8 @@ class Grid:
 
         for row_idx, row in enumerate(self._tile_superpositions):
             for col_idx, tile_superposition in enumerate(row):
-                assert tile_superposition.is_valid()
+                if not tile_superposition.is_valid():
+                    return None
 
                 if not tile_superposition.has_collapsed():
                     if tile_superposition.get_entropy() < lowest_entropy:

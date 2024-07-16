@@ -6,17 +6,19 @@ from pathlib import Path
 DIR = basic.Direction
 
 
-def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset], default_graphic: TileAsset) -> list[list[TileAsset]]:
+def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset], superposition_graphic: TileAsset, invalid_graphic: TileAsset) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
     grid_data: list[list[TileAsset]] = [[TileAsset(Path()) for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
         for col_idx, tile in enumerate(row):
-            if tile.has_collapsed():
+            if not tile.is_valid():
+                grid_data[row_idx][col_idx] = invalid_graphic
+            elif tile.has_collapsed():
                 grid_data[row_idx][col_idx] = graphics_map[tile.get_collapsed_state().get_id()]
             else:
-                grid_data[row_idx][col_idx] = default_graphic
+                grid_data[row_idx][col_idx] = superposition_graphic
 
     return grid_data
 
@@ -44,9 +46,9 @@ def main() -> None:
     ]
 
     weights: list[float] = [
-        15,  # grass1
+        1,  # grass1
         1,  # grass2
-        1,  # grass3
+        15,  # grass3
         0.25,  # end_r0
         0.25,  # end_r1
         0.25,  # end_r2
@@ -85,7 +87,8 @@ def main() -> None:
         "cross":         TileAsset(Path("graphics/cross.png")),
     }
 
-    default_graphic = TileAsset(Path("graphics/unknown.png"))
+    superposition_graphic = TileAsset(Path("graphics/unknown.png"))
+    invalid_graphic = TileAsset(Path("graphics/invalid.png"))
 
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
@@ -116,12 +119,9 @@ def main() -> None:
             elif event == UserAction.COLLAPSE_SPECIFIC:
                 event_data: tuple[int, int]
                 (click_x, click_y) = event_data
-                print(f"Clicked {(click_x, click_y)}")
 
                 column = int((click_x / screen_width) * grid_size)
                 row = int((click_y / screen_height) * grid_size)
-
-                print(f"Click happened at row {row}, column {column}")
 
                 grid.collapse_tile_superposition((row, column))
 
@@ -130,7 +130,7 @@ def main() -> None:
             if tile_coordinate is not None:
                 grid.collapse_tile_superposition(tile_coordinate)
 
-        display_data = grid_data_to_display_data(grid, graphics, default_graphic)
+        display_data = grid_data_to_display_data(grid, graphics, superposition_graphic, invalid_graphic)
         gui.display_grid(display_data)
 
 
