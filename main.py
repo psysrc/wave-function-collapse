@@ -1,4 +1,4 @@
-from gui.view import display_grid, Colour
+from gui.view import display_grid, TileAsset
 from wfc import basic
 
 
@@ -16,18 +16,13 @@ def main() -> None:
 
     print(grid.pretty_print_grid_state())
 
-    black = (0, 0, 0)
-    red = (150, 0, 0)
-    green = (0, 150, 0)
-    blue = (0, 0, 150)
-
-    mapping: dict[basic.TileID, Colour] = {
-        1: blue,
-        2: red,
-        3: green,
+    mapping: dict[basic.TileID, TileAsset] = {
+        1: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/air.png"),
+        2: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/water.png"),
+        3: TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/Mage Arena/earth.png"),
     }
 
-    grid_data: list[list[Colour]] = [[black for _ in range(grid_size)] for _ in range(grid_size)]
+    grid_data: list[list[TileAsset]] = [[TileAsset() for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
         for col_idx, tile in enumerate(row):
