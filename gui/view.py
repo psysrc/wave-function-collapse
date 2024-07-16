@@ -5,7 +5,6 @@ from enum import Enum
 from helpers.rotation import Rotation
 
 
-
 class TileAsset:
     def __init__(self, image_path: Path, rotation: Rotation = Rotation.NONE) -> None:
         self._filepath = image_path
@@ -64,7 +63,7 @@ class GUI:
                 image = pygame.transform.rotate(image, asset.get_rotation())
                 image = pygame.transform.scale(image, (cell_width, cell_height))
 
-                rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
+                rect = pygame.Rect(column * cell_width, row * cell_height, cell_width, cell_height)
                 self._screen.blit(image, rect)
 
         pygame.display.flip()

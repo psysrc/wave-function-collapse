@@ -11,6 +11,7 @@ class Direction(Enum):
     DOWN = 2
     RIGHT = 3
 
+
 _opposite_direction = {
     Direction.LEFT: Direction.RIGHT,
     Direction.UP: Direction.DOWN,
@@ -69,14 +70,21 @@ class _InternalTile:
     socket_sets: DirectionalSocketSetMap
 
 
-def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
+def _create_internal_tiles_from_tile_definition(
+    tile_definition: TileDefinition,
+) -> list[_InternalTile]:
     if tile_definition.rotatable:
         raise NotImplementedError("Rotatable tiles are currently unsupported")  # TODO
 
     if tile_definition.flippable:
         raise NotImplementedError("Flipped tiles are currently unsupported")  # TODO
 
-    return [_InternalTile(Tile(tile_definition.id, rotation=Rotation.NONE, flipped=Flipped.NONE), tile_definition.socket_sets)]
+    return [
+        _InternalTile(
+            Tile(tile_definition.id, rotation=Rotation.NONE, flipped=Flipped.NONE),
+            tile_definition.socket_sets,
+        )
+    ]
 
 
 class _TileSuperposition:
@@ -155,7 +163,12 @@ class _TileSuperposition:
 
 
 class Grid:
-    def __init__(self, grid_size: int, tile_definitions: list[TileDefinition], weights: list[float] | None = None) -> None:
+    def __init__(
+        self,
+        grid_size: int,
+        tile_definitions: list[TileDefinition],
+        weights: list[float] | None = None,
+    ) -> None:
         self._grid_size = grid_size
 
         self._tiles: list[_InternalTile] = []
@@ -182,7 +195,6 @@ class Grid:
 
         return True
 
-
     def get_grid_size(self) -> int:
         return self._grid_size
 
@@ -203,7 +215,6 @@ class Grid:
 
         return result
 
-
     def collapse(self) -> None:
         """Collapse the whole grid into a single known state."""
 
@@ -219,7 +230,12 @@ class Grid:
         return self._tile_superpositions[coordinate[0]][coordinate[1]]
 
     def _is_coordinate_valid(self, coordinate: Coordinate) -> bool:
-        return coordinate[0] >= 0 and coordinate[0] < self._grid_size and coordinate[1] >= 0 and coordinate[1] < self._grid_size
+        return (
+            coordinate[0] >= 0
+            and coordinate[0] < self._grid_size
+            and coordinate[1] >= 0
+            and coordinate[1] < self._grid_size
+        )
 
     def _get_valid_neighbours(self, coordinate: Coordinate) -> dict[tuple[Coordinate, Direction], Coordinate]:
         """
@@ -232,10 +248,10 @@ class Grid:
         """
 
         possible_neighbours = {
-            (coordinate, Direction.LEFT): (coordinate[0], coordinate[1]-1),
-            (coordinate, Direction.UP): (coordinate[0]-1, coordinate[1]),
-            (coordinate, Direction.DOWN): (coordinate[0]+1, coordinate[1]),
-            (coordinate, Direction.RIGHT): (coordinate[0], coordinate[1]+1),
+            (coordinate, Direction.LEFT): (coordinate[0], coordinate[1] - 1),
+            (coordinate, Direction.UP): (coordinate[0] - 1, coordinate[1]),
+            (coordinate, Direction.DOWN): (coordinate[0] + 1, coordinate[1]),
+            (coordinate, Direction.RIGHT): (coordinate[0], coordinate[1] + 1),
         }
 
         neighbours: dict[tuple[Coordinate, Direction], Coordinate] = {}
@@ -301,8 +317,6 @@ class Grid:
                         neighbours_to_propagate_to[key] = new_neighbour
 
         return True
-
-
 
     def pretty_print_grid_state(self) -> str:
         output: str = ""

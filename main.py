@@ -7,7 +7,12 @@ from pathlib import Path
 DIR = basic.Direction
 
 
-def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset], superposition_graphic: TileAsset, invalid_graphic: TileAsset) -> list[list[TileAsset]]:
+def grid_data_to_display_data(
+    grid: basic.Grid,
+    graphics_map: dict[basic.TileID, TileAsset],
+    superposition_graphic: TileAsset,
+    invalid_graphic: TileAsset,
+) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
     grid_data: list[list[TileAsset]] = [[TileAsset(Path()) for _ in range(grid_size)] for _ in range(grid_size)]
@@ -33,24 +38,85 @@ def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID,
 
 def main() -> None:
     tiles: list[basic.TileDefinition] = [
-        basic.TileDefinition("grass1",        {DIR.LEFT: {"g1", "g2"}, DIR.UP: {"g1", "g2"}, DIR.DOWN: {"g1", "g2"}, DIR.RIGHT: {"g1", "g2"}}),
-        basic.TileDefinition("grass2",        {DIR.LEFT: {"g2", "g3"}, DIR.UP: {"g2", "g3"}, DIR.DOWN: {"g2", "g3"}, DIR.RIGHT: {"g2", "g3"}}),
-        basic.TileDefinition("grass3",        {DIR.LEFT: {"g3"}, DIR.UP: {"g3"}, DIR.DOWN: {"g3"}, DIR.RIGHT: {"g3"}}),
-        basic.TileDefinition("end_r0",        {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("end_r1",        {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("end_r2",        {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("end_r3",        {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("straight_r0",   {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("straight_r1",   {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r0",     {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("corner_r1",     {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r2",     {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r3",     {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("t-junction_r0", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r2", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r3", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("cross",         {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
+        basic.TileDefinition(
+            "grass1",
+            {
+                DIR.LEFT: {"g1", "g2"},
+                DIR.UP: {"g1", "g2"},
+                DIR.DOWN: {"g1", "g2"},
+                DIR.RIGHT: {"g1", "g2"},
+            },
+        ),
+        basic.TileDefinition(
+            "grass2",
+            {
+                DIR.LEFT: {"g2", "g3"},
+                DIR.UP: {"g2", "g3"},
+                DIR.DOWN: {"g2", "g3"},
+                DIR.RIGHT: {"g2", "g3"},
+            },
+        ),
+        basic.TileDefinition(
+            "grass3",
+            {DIR.LEFT: {"g3"}, DIR.UP: {"g3"}, DIR.DOWN: {"g3"}, DIR.RIGHT: {"g3"}},
+        ),
+        basic.TileDefinition(
+            "end_r0",
+            {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "end_r1",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "end_r2",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "end_r3",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "straight_r0",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "straight_r1",
+            {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "corner_r0",
+            {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "corner_r1",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "corner_r2",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "corner_r3",
+            {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition(
+            "t-junction_r0",
+            {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "t-junction_r1",
+            {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "t-junction_r2",
+            {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}},
+        ),
+        basic.TileDefinition(
+            "t-junction_r3",
+            {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}},
+        ),
+        basic.TileDefinition("cross", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
     ]
 
     weights: list[float] = [
@@ -71,28 +137,28 @@ def main() -> None:
         0.25,  # t-junction_r1
         0.25,  # t-junction_r2
         0.25,  # t-junction_r3
-        1,     # cross
+        1,  # cross
     ]
 
     graphics: dict[basic.TileID, TileAsset] = {
-        "grass1":        TileAsset(Path("graphics/grass-1.png")),
-        "grass2":        TileAsset(Path("graphics/grass-3.png")),
-        "grass3":        TileAsset(Path("graphics/grass-4.png")),
-        "end_r0":        TileAsset(Path("graphics/end.png")),
-        "end_r1":        TileAsset(Path("graphics/end.png"), rotation=Rotation.CLOCKWISE),
-        "end_r2":        TileAsset(Path("graphics/end.png"), rotation=Rotation.HALF),
-        "end_r3":        TileAsset(Path("graphics/end.png"), rotation=Rotation.ANTICLOCKWISE),
-        "straight_r0":   TileAsset(Path("graphics/straight.png")),
-        "straight_r1":   TileAsset(Path("graphics/straight.png"), rotation=Rotation.CLOCKWISE),
-        "corner_r0":     TileAsset(Path("graphics/corner.png")),
-        "corner_r1":     TileAsset(Path("graphics/corner.png"), rotation=Rotation.CLOCKWISE),
-        "corner_r2":     TileAsset(Path("graphics/corner.png"), rotation=Rotation.HALF),
-        "corner_r3":     TileAsset(Path("graphics/corner.png"), rotation=Rotation.ANTICLOCKWISE),
+        "grass1": TileAsset(Path("graphics/grass-1.png")),
+        "grass2": TileAsset(Path("graphics/grass-3.png")),
+        "grass3": TileAsset(Path("graphics/grass-4.png")),
+        "end_r0": TileAsset(Path("graphics/end.png")),
+        "end_r1": TileAsset(Path("graphics/end.png"), rotation=Rotation.CLOCKWISE),
+        "end_r2": TileAsset(Path("graphics/end.png"), rotation=Rotation.HALF),
+        "end_r3": TileAsset(Path("graphics/end.png"), rotation=Rotation.ANTICLOCKWISE),
+        "straight_r0": TileAsset(Path("graphics/straight.png")),
+        "straight_r1": TileAsset(Path("graphics/straight.png"), rotation=Rotation.CLOCKWISE),
+        "corner_r0": TileAsset(Path("graphics/corner.png")),
+        "corner_r1": TileAsset(Path("graphics/corner.png"), rotation=Rotation.CLOCKWISE),
+        "corner_r2": TileAsset(Path("graphics/corner.png"), rotation=Rotation.HALF),
+        "corner_r3": TileAsset(Path("graphics/corner.png"), rotation=Rotation.ANTICLOCKWISE),
         "t-junction_r0": TileAsset(Path("graphics/t-junction.png")),
         "t-junction_r1": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.CLOCKWISE),
         "t-junction_r2": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.HALF),
         "t-junction_r3": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.ANTICLOCKWISE),
-        "cross":         TileAsset(Path("graphics/cross.png")),
+        "cross": TileAsset(Path("graphics/cross.png")),
     }
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
@@ -114,7 +180,7 @@ def main() -> None:
     while True:
         events = gui.handle_events()
 
-        for (event, event_data) in events:
+        for event, event_data in events:
             if event == UserAction.QUIT:
                 return
 
