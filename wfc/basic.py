@@ -195,14 +195,22 @@ class Grid:
     def get_grid_size(self) -> int:
         return self._grid_size
 
-    def get_grid(self) -> list[list[_TileSuperposition]]:
-        return self._tile_superpositions
+    def get_grid(self) -> list[list[TileSuperposition]]:
+        result: list[list[TileSuperposition]] = []
 
-    # def get_collapsed_grid(self) -> list[list[TileSuperpositionState]]
-    #     if not self.has_collapsed():
-    #         raise RuntimeError("Cannot get collapsed grid when the grid still contains superpositions")
+        for row_idx, row in enumerate(self._tile_superpositions):
+            result.append([])
 
+            for tile_superposition in row:
+                if not tile_superposition.is_valid():
+                    result[row_idx].append(TileSuperposition(Superposition.INVALID, None))
+                elif tile_superposition.has_collapsed():
+                    tile = tile_superposition.get_collapsed_state()
+                    result[row_idx].append(TileSuperposition(Superposition.COLLAPSED, Tile(tile.get_id(), rotation=Rotation.NONE, flipped=Flipped.NONE)))
+                else:
+                    result[row_idx].append(TileSuperposition(Superposition.SUPERPOSITION, None))
 
+        return result
 
 
     def collapse(self) -> None:

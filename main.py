@@ -13,13 +13,20 @@ def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID,
     grid_data: list[list[TileAsset]] = [[TileAsset(Path()) for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
-        for col_idx, tile in enumerate(row):
-            if not tile.is_valid():
+        for col_idx, tile_superposition in enumerate(row):
+            if tile_superposition.superposition == basic.Superposition.INVALID:
                 grid_data[row_idx][col_idx] = invalid_graphic
-            elif tile.has_collapsed():
-                grid_data[row_idx][col_idx] = graphics_map[tile.get_collapsed_state().get_id()]
-            else:
+
+            elif tile_superposition.superposition == basic.Superposition.COLLAPSED:
+                assert tile_superposition.tile is not None
+
+                grid_data[row_idx][col_idx] = graphics_map[tile_superposition.tile.id]
+
+            elif tile_superposition.superposition == basic.Superposition.SUPERPOSITION:
                 grid_data[row_idx][col_idx] = superposition_graphic
+
+            else:
+                raise RuntimeError(f"Unknown tile superposition: {tile_superposition.superposition}")
 
     return grid_data
 
