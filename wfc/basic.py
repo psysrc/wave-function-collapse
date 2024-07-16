@@ -120,6 +120,14 @@ class Grid:
             [TileSuperposition(self._tiles, weights) for _ in range(grid_size)] for _ in range(grid_size)
         ]
 
+    def is_valid(self) -> bool:
+        for row in self._tile_superpositions:
+            for tile_superposition in row:
+                if not tile_superposition.is_valid():
+                    return False
+
+        return True
+
     def get_grid_size(self) -> int:
         return self._grid_size
 
@@ -169,9 +177,9 @@ class Grid:
 
     def find_lowest_entropy_tile_superposition(self) -> Coordinate | None:
         """
-        Return the tile coordinate that has the lowest entropy.
+        Return the coordinates of a valid tile superposition that has the lowest entropy and has not yet collapsed.
 
-        `None` is returned if the grid is fully collapsed, or contains an invalid superposition.
+        `None` is returned if the grid is fully collapsed.
         """
 
         lowest_entropy_indices: list[Coordinate] = []
@@ -179,10 +187,7 @@ class Grid:
 
         for row_idx, row in enumerate(self._tile_superpositions):
             for col_idx, tile_superposition in enumerate(row):
-                if not tile_superposition.is_valid():
-                    return None
-
-                if not tile_superposition.has_collapsed():
+                if tile_superposition.is_valid() and not tile_superposition.has_collapsed():
                     if tile_superposition.get_entropy() < lowest_entropy:
                         lowest_entropy_indices.clear()
                         lowest_entropy = tile_superposition.get_entropy()
@@ -216,7 +221,7 @@ class Grid:
 
             was_affected = source.propagate(new_neighbour, direction)
 
-            if was_affected:
+            if was_affected and new_neighbour.is_valid():
                 more_neighbours = self._get_valid_neighbours(neighbour_coords)
 
                 for key, new_neighbour in more_neighbours.items():
