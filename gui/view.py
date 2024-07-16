@@ -31,3 +31,4 @@ def display_grid(rows: int, columns: int, grid_data: list[list[Colour]]) -> None
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                return

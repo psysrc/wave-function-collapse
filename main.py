@@ -9,21 +9,31 @@ def main() -> None:
         basic.Tile(3, {basic.Direction.LEFT: "b", basic.Direction.UP: "b", basic.Direction.DOWN: "b", basic.Direction.RIGHT: "b"}),
     ]
 
-    grid = basic.Grid(4, tiles)
+    grid_size = 4
+    grid = basic.Grid(grid_size, tiles)
 
     grid.collapse()
 
     print(grid.pretty_print_grid_state())
 
-    red = (255, 0, 0)
-    green = (0, 255, 0)
-    blue = (0, 0, 255)
+    black = (0, 0, 0)
+    red = (150, 0, 0)
+    green = (0, 150, 0)
+    blue = (0, 0, 150)
 
-    grid_data: list[list[Colour]] = [
-        [red, green, blue],
-        [blue, green, red],
-    ]
-    display_grid(2, 3, grid_data)
+    mapping: dict[basic.TileID, Colour] = {
+        1: blue,
+        2: red,
+        3: green,
+    }
+
+    grid_data: list[list[Colour]] = [[black for _ in range(grid_size)] for _ in range(grid_size)]
+
+    for row_idx, row in enumerate(grid.get_grid()):
+        for col_idx, tile in enumerate(row):
+            grid_data[row_idx][col_idx] = mapping[tile.get_collapsed_state().get_id()]
+
+    display_grid(grid_size, grid_size, grid_data)
 
 
 if __name__ == "__main__":
