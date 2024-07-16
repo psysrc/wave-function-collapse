@@ -8,7 +8,7 @@ DIR = basic.Direction
 
 
 def grid_data_to_display_data(
-    grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset], superposition_graphic: TileAsset, invalid_graphic: TileAsset
+    grid: basic.Grid, graphics_map: dict[basic.Tile, TileAsset], superposition_graphic: TileAsset, invalid_graphic: TileAsset
 ) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
@@ -22,7 +22,7 @@ def grid_data_to_display_data(
             elif tile_superposition.superposition == basic.Superposition.COLLAPSED:
                 assert tile_superposition.tile is not None
 
-                grid_data[row_idx][col_idx] = graphics_map[tile_superposition.tile.id]
+                grid_data[row_idx][col_idx] = graphics_map[tile_superposition.tile]
 
             elif tile_superposition.superposition == basic.Superposition.SUPERPOSITION:
                 grid_data[row_idx][col_idx] = superposition_graphic
@@ -55,25 +55,25 @@ def main() -> None:
         basic.TileDefinition("cross", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}, prob_weight=1),
     ]
 
-    graphics: dict[basic.TileID, TileAsset] = {
-        "grass1": TileAsset(Path("graphics/grass-1.png")),
-        "grass2": TileAsset(Path("graphics/grass-3.png")),
-        "grass3": TileAsset(Path("graphics/grass-4.png")),
-        "end_r0": TileAsset(Path("graphics/end.png")),
-        "end_r1": TileAsset(Path("graphics/end.png"), rotation=Rotation.CLOCKWISE),
-        "end_r2": TileAsset(Path("graphics/end.png"), rotation=Rotation.HALF),
-        "end_r3": TileAsset(Path("graphics/end.png"), rotation=Rotation.ANTICLOCKWISE),
-        "straight_r0": TileAsset(Path("graphics/straight.png")),
-        "straight_r1": TileAsset(Path("graphics/straight.png"), rotation=Rotation.CLOCKWISE),
-        "corner_r0": TileAsset(Path("graphics/corner.png")),
-        "corner_r1": TileAsset(Path("graphics/corner.png"), rotation=Rotation.CLOCKWISE),
-        "corner_r2": TileAsset(Path("graphics/corner.png"), rotation=Rotation.HALF),
-        "corner_r3": TileAsset(Path("graphics/corner.png"), rotation=Rotation.ANTICLOCKWISE),
-        "t-junction_r0": TileAsset(Path("graphics/t-junction.png")),
-        "t-junction_r1": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.CLOCKWISE),
-        "t-junction_r2": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.HALF),
-        "t-junction_r3": TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.ANTICLOCKWISE),
-        "cross": TileAsset(Path("graphics/cross.png")),
+    graphics: dict[basic.Tile, TileAsset] = {
+        basic.Tile("grass1"): TileAsset(Path("graphics/grass-1.png")),
+        basic.Tile("grass2"): TileAsset(Path("graphics/grass-3.png")),
+        basic.Tile("grass3"): TileAsset(Path("graphics/grass-4.png")),
+        basic.Tile("end_r0"): TileAsset(Path("graphics/end.png")),
+        basic.Tile("end_r1"): TileAsset(Path("graphics/end.png"), rotation=Rotation.CLOCKWISE),
+        basic.Tile("end_r2"): TileAsset(Path("graphics/end.png"), rotation=Rotation.HALF),
+        basic.Tile("end_r3"): TileAsset(Path("graphics/end.png"), rotation=Rotation.ANTICLOCKWISE),
+        basic.Tile("straight_r0"): TileAsset(Path("graphics/straight.png")),
+        basic.Tile("straight_r1"): TileAsset(Path("graphics/straight.png"), rotation=Rotation.CLOCKWISE),
+        basic.Tile("corner_r0"): TileAsset(Path("graphics/corner.png")),
+        basic.Tile("corner_r1"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.CLOCKWISE),
+        basic.Tile("corner_r2"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.HALF),
+        basic.Tile("corner_r3"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.ANTICLOCKWISE),
+        basic.Tile("t-junction_r0"): TileAsset(Path("graphics/t-junction.png")),
+        basic.Tile("t-junction_r1"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.CLOCKWISE),
+        basic.Tile("t-junction_r2"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.HALF),
+        basic.Tile("t-junction_r3"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.ANTICLOCKWISE),
+        basic.Tile("cross"): TileAsset(Path("graphics/cross.png")),
     }
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))

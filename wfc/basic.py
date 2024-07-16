@@ -34,13 +34,13 @@ class Superposition(Enum):
     INVALID = 2
 
 
-@dataclass
+@dataclass(frozen=True)
 class Tile:
     """Describes a tile in a specific position."""
 
     id: TileID
-    rotation: Rotation
-    flipped: Flipped
+    rotation: Rotation = Rotation.NONE
+    flipped: Flipped = Flipped.NONE
 
 
 @dataclass
