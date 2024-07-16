@@ -5,9 +5,9 @@ from enum import IntEnum
 
 class Rotation(IntEnum):
     NONE = 0
-    CLOCKWISE = 90
+    ANTICLOCKWISE = 90
     HALF = 180
-    ANTICLOCKWISE = 270
+    CLOCKWISE = 270
 
 
 class TileAsset:
