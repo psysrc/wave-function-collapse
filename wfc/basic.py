@@ -17,20 +17,21 @@ _opposite_direction = {
 
 TileID = int | str
 Socket = int | str
-Sockets = dict[Direction, Socket]
+SocketSet = set[Socket]
+DirectionSocketSetMap = dict[Direction, SocketSet]
 Coordinate = tuple[int, int]
 
 
 class Tile:
-    def __init__(self, id: TileID, sockets: Sockets, rotatable: bool = True, flippable: bool = True) -> None:
+    def __init__(self, id: TileID, socketsets: DirectionSocketSetMap, rotatable: bool = True, flippable: bool = True) -> None:
         self._id: TileID = id
-        self._sockets: Sockets = sockets
+        self._socketsets: DirectionSocketSetMap = socketsets
 
-    def get_sockets(self) -> Sockets:
-        return self._sockets
+    def get_socketsets(self) -> DirectionSocketSetMap:
+        return self._socketsets
 
-    def get_socket(self, direction: Direction) -> Socket:
-        return self._sockets[direction]
+    def get_socketset(self, direction: Direction) -> SocketSet:
+        return self._socketsets[direction]
 
     def get_id(self) -> TileID:
         return self._id
@@ -62,16 +63,18 @@ class TileSuperposition:
         Return whether or not the other superposition was affected by this propagation.
         """
 
-        possible_sockets: list[Socket] = [p.get_socket(direction) for p in self._possibilities]
+        possible_sockets: SocketSet = set()
+        possible_socketsets: list[SocketSet] = [p.get_socketset(direction) for p in self._possibilities]
+        for ss in possible_socketsets:
+            possible_sockets = possible_sockets.union(ss)
 
         possibilities_to_remove: list[Tile] = []
         for other_possibility in other.get_possibilities():
-            if other_possibility.get_socket(_opposite_direction[direction]) not in possible_sockets:
+            if other_possibility.get_socketset(_opposite_direction[direction]).isdisjoint(possible_sockets):
                 possibilities_to_remove.append(other_possibility)
 
         for p in possibilities_to_remove:
             other.remove(p)
-
 
         return len(possibilities_to_remove) > 0
 
