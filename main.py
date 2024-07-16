@@ -1,4 +1,4 @@
-from gui.view import display_grid, TileAsset, Rotation
+from gui.view import GUI, TileAsset, Rotation
 from wfc import basic
 from pathlib import Path
 
@@ -15,7 +15,7 @@ def display_wfc_grid(grid: basic.Grid, graphics: dict[basic.TileID, TileAsset]) 
         for col_idx, tile in enumerate(row):
             grid_data[row_idx][col_idx] = graphics[tile.get_collapsed_state().get_id()]
 
-    display_grid(grid_size, grid_size, grid_data)
+    GUI().display_grid(grid_data)
 
 
 def main() -> None:
