@@ -1,6 +1,6 @@
 import pygame
 from pathlib import Path
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 
 class Rotation(IntEnum):
@@ -22,13 +22,18 @@ class TileAsset:
         return self._rotation
 
 
+class QuitOrNot(Enum):
+    NO_QUIT = 0
+    QUIT = 1
+
+
 class GUI:
     def __init__(self) -> None:
         self._screen_width = 800
         self._screen_height = 800
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
 
-        self._max_fps = 5
+        self._max_fps = 30
 
         self._clock = pygame.time.Clock()
 
@@ -63,11 +68,18 @@ class GUI:
                 rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
                 self._screen.blit(image, rect)
 
+        pygame.display.flip()
+
+    def handle_events(self) -> QuitOrNot:
         while True:
-            pygame.display.flip()  # Update the screen.
-            self._clock.tick(self._max_fps)  # max FPS = 10
+            pygame.display.flip()
+            self._clock.tick(self._max_fps)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    return
+                    return QuitOrNot.QUIT
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        return QuitOrNot.NO_QUIT

@@ -1,4 +1,4 @@
-from gui.view import GUI, TileAsset, Rotation
+from gui.view import GUI, QuitOrNot, TileAsset, Rotation
 from wfc import basic
 from pathlib import Path
 
@@ -6,16 +6,16 @@ from pathlib import Path
 DIR = basic.Direction
 
 
-def display_wfc_grid(grid: basic.Grid, graphics: dict[basic.TileID, TileAsset]) -> None:
+def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset]) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
     grid_data: list[list[TileAsset]] = [[TileAsset(Path()) for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
         for col_idx, tile in enumerate(row):
-            grid_data[row_idx][col_idx] = graphics[tile.get_collapsed_state().get_id()]
+            grid_data[row_idx][col_idx] = graphics_map[tile.get_collapsed_state().get_id()]
 
-    GUI().display_grid(grid_data)
+    return grid_data
 
 
 def main() -> None:
@@ -82,18 +82,27 @@ def main() -> None:
         "cross":         TileAsset(Path("graphics/cross.png")),
     }
 
+    gui = GUI()
+
     grid_size = 16
     grid = basic.Grid(grid_size, tiles, weights)
 
-    print("Collapsing grid... ", end="", flush=True)
-    grid.collapse()
-    print("Done:")
+    while True:
+        print("Waiting for the user to exit or press <ENTER>... ", end="", flush=True)
+        event = gui.handle_events()
+        print("Done.")
 
-    print(grid.pretty_print_grid_state())
+        if event == QuitOrNot.QUIT:
+            return
 
-    print("Displaying grid... ", end="", flush=True)
-    display_wfc_grid(grid, graphics)
-    print("Done.")
+        print("Collapsing grid... ", end="", flush=True)
+        grid.collapse()
+        print("Done.")
+
+        print("Displaying grid... ", end="", flush=True)
+        display_data = grid_data_to_display_data(grid, graphics)
+        gui.display_grid(display_data)
+        print("Done.")
 
 
 if __name__ == "__main__":
