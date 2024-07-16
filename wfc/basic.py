@@ -38,22 +38,31 @@ class Tile:
 
 
 class TileSuperposition:
-    def __init__(self, possibilities: list[Tile]) -> None:
+    def __init__(self, possibilities: list[Tile], weights: list[float] | None = None) -> None:
         assert len(possibilities) > 0
-        self._possibilities: list[Tile] = possibilities.copy()
+
+        if weights is not None:
+            assert len(possibilities) == len(weights)
+        else:
+            weights = [1.0] * len(possibilities)
+
+        self._possibilities_and_weights: list[tuple[Tile, float]] = list(zip(possibilities.copy(), weights))
 
     def has_collapsed(self) -> bool:
-        return len(self._possibilities) == 1
+        return len(self._possibilities_and_weights) == 1
 
     def is_valid(self) -> bool:
-        return len(self._possibilities) > 0
+        return len(self._possibilities_and_weights) > 0
 
     def get_possibilities(self) -> list[Tile]:
-        return self._possibilities
+        return [pw[0] for pw in self._possibilities_and_weights]
 
     def remove(self, possibility: Tile) -> None:
-        if possibility in self._possibilities:
-            self._possibilities.remove(possibility)
+        for pw in self._possibilities_and_weights:
+            match pw:
+                case (p, w) if p == possibility:
+                    self._possibilities_and_weights.remove((p, w))
+                    break
 
     def propagate(self, other: "TileSuperposition", direction: Direction) -> bool:
         """
@@ -64,7 +73,7 @@ class TileSuperposition:
         """
 
         possible_sockets: SocketSet = set()
-        possible_socketsets: list[SocketSet] = [p.get_socketset(direction) for p in self._possibilities]
+        possible_socketsets: list[SocketSet] = [p.get_socketset(direction) for (p, _) in self._possibilities_and_weights]
         for ss in possible_socketsets:
             possible_sockets = possible_sockets.union(ss)
 
@@ -83,24 +92,24 @@ class TileSuperposition:
 
         assert self.is_valid()
 
-        # TODO: Support arbitrary weights for each possibility
-        # Collapse the possibilities into a single state
-        self._possibilities = [random.choice(self._possibilities)]
+        weights = [w for (_, w) in self._possibilities_and_weights]
+
+        self._possibilities_and_weights = random.choices(self._possibilities_and_weights, weights=weights)
 
     def get_entropy(self) -> int:
-        return len(self._possibilities)
+        return len(self._possibilities_and_weights)
 
     def get_collapsed_state(self) -> Tile:
         assert self.has_collapsed()
-        return self._possibilities[0]
+        return self._possibilities_and_weights[0][0]
 
 
 class Grid:
-    def __init__(self, grid_size: int, tiles: list[Tile]) -> None:
+    def __init__(self, grid_size: int, tiles: list[Tile], weights: list[float] | None = None) -> None:
         self._grid_size = grid_size
         self._tiles = tiles
         self._tile_superpositions: list[list[TileSuperposition]] = [
-            [TileSuperposition(self._tiles) for _ in range(grid_size)] for _ in range(grid_size)
+            [TileSuperposition(self._tiles, weights) for _ in range(grid_size)] for _ in range(grid_size)
         ]
 
     def get_grid_size(self) -> int:

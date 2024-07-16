@@ -40,6 +40,27 @@ def main() -> None:
         basic.Tile("cross",         {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
     ]
 
+    weights: list[float] = [
+        15,  # grass1
+        1,  # grass2
+        1,  # grass3
+        0.25,  # end_r0
+        0.25,  # end_r1
+        0.25,  # end_r2
+        0.25,  # end_r3
+        10,  # straight_r0
+        10,  # straight_r1
+        0.25,  # corner_r0
+        0.25,  # corner_r1
+        0.25,  # corner_r2
+        0.25,  # corner_r3
+        0.25,  # t-junction_r0
+        0.25,  # t-junction_r1
+        0.25,  # t-junction_r2
+        0.25,  # t-junction_r3
+        1,     # cross
+    ]
+
     graphics: dict[basic.TileID, TileAsset] = {
         "grass1":        TileAsset(Path("graphics/grass-1.png")),
         "grass2":        TileAsset(Path("graphics/grass-3.png")),
@@ -62,7 +83,7 @@ def main() -> None:
     }
 
     grid_size = 16
-    grid = basic.Grid(grid_size, tiles)
+    grid = basic.Grid(grid_size, tiles, weights)
 
     print("Collapsing grid... ", end="", flush=True)
     grid.collapse()

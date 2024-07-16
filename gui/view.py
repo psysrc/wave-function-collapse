@@ -28,7 +28,7 @@ def display_grid(rows: int, columns: int, grid_data: list[list[TileAsset]]) -> N
     resolution = (width, height)
     screen = pygame.display.set_mode(resolution)
 
-    max_fps = 1
+    max_fps = 5
 
     cell_height = height / rows
     cell_width = width / columns
