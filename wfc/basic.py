@@ -63,19 +63,10 @@ class TileDefinition:
     flippable: bool = False
 
 
+@dataclass
 class _InternalTile:
-    def __init__(self, id: TileID, socketsets: DirectionalSocketSetMap) -> None:
-        self._id: TileID = id
-        self._socketsets: DirectionalSocketSetMap = socketsets
-
-    def get_socketsets(self) -> DirectionalSocketSetMap:
-        return self._socketsets
-
-    def get_socketset(self, direction: Direction) -> SocketSet:
-        return self._socketsets[direction]
-
-    def get_id(self) -> TileID:
-        return self._id
+    tile: Tile
+    socket_sets: DirectionalSocketSetMap
 
 
 def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
@@ -85,7 +76,7 @@ def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition)
     if tile_definition.flippable:
         raise NotImplementedError("Flipped tiles are currently unsupported")  # TODO
 
-    return [_InternalTile(tile_definition.id, tile_definition.socket_sets)]
+    return [_InternalTile(Tile(tile_definition.id, rotation=Rotation.NONE, flipped=Flipped.NONE), tile_definition.socket_sets)]
 
 
 class _TileSuperposition:
@@ -126,13 +117,13 @@ class _TileSuperposition:
         """
 
         possible_sockets: SocketSet = set()
-        possible_socketsets: list[SocketSet] = [p.get_socketset(direction) for (p, _) in self._possibilities_and_weights]
+        possible_socketsets: list[SocketSet] = [p.socket_sets[direction] for (p, _) in self._possibilities_and_weights]
         for ss in possible_socketsets:
             possible_sockets = possible_sockets.union(ss)
 
         possibilities_to_remove: list[_InternalTile] = []
         for other_possibility in other.get_possibilities():
-            if other_possibility.get_socketset(_opposite_direction[direction]).isdisjoint(possible_sockets):
+            if other_possibility.socket_sets[_opposite_direction[direction]].isdisjoint(possible_sockets):
                 possibilities_to_remove.append(other_possibility)
 
         for p in possibilities_to_remove:
@@ -205,8 +196,8 @@ class Grid:
                 if not tile_superposition.is_valid():
                     result[row_idx].append(TileSuperposition(Superposition.INVALID, None))
                 elif tile_superposition.has_collapsed():
-                    tile = tile_superposition.get_collapsed_state()
-                    result[row_idx].append(TileSuperposition(Superposition.COLLAPSED, Tile(tile.get_id(), rotation=Rotation.NONE, flipped=Flipped.NONE)))
+                    internal_tile = tile_superposition.get_collapsed_state()
+                    result[row_idx].append(TileSuperposition(Superposition.COLLAPSED, internal_tile.tile))
                 else:
                     result[row_idx].append(TileSuperposition(Superposition.SUPERPOSITION, None))
 
@@ -317,7 +308,7 @@ class Grid:
         output: str = ""
         for row in self._tile_superpositions:
             for tile in row:
-                output += f"{[p.get_id() for p in tile.get_possibilities()]}, "
+                output += f"{[p.tile.id for p in tile.get_possibilities()]}, "
 
             output += "\n"
 
