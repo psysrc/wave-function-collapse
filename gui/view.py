@@ -1,14 +1,9 @@
 from typing import Any
 import pygame
 from pathlib import Path
-from enum import IntEnum, Enum
+from enum import Enum
+from helpers.rotation import Rotation
 
-
-class Rotation(IntEnum):
-    NONE = 0
-    ANTICLOCKWISE = 90
-    HALF = 180
-    CLOCKWISE = 270
 
 
 class TileAsset:
