@@ -22,9 +22,12 @@ class TileAsset:
         return self._rotation
 
 
-class QuitOrNot(Enum):
-    NO_QUIT = 0
+class UserAction(Enum):
+    NONE = 0
     QUIT = 1
+    COLLAPSE_ONE = 2
+    COLLAPSE_ALL_SLOWLY = 3
+    COLLAPSE_ALL_IMMEDIATELY = 4
 
 
 class GUI:
@@ -34,10 +37,7 @@ class GUI:
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
 
         self._max_fps = 30
-
         self._clock = pygame.time.Clock()
-
-        self._auto_collapse = False
 
     def display_grid(self, grid_data: list[list[TileAsset]]) -> None:
         """Displays the grid data and waits for the user to press a button."""
@@ -72,23 +72,25 @@ class GUI:
 
         pygame.display.flip()
 
-    def handle_events(self) -> QuitOrNot:
-        while True:
-            pygame.display.flip()
-            self._clock.tick(self._max_fps)
+    def handle_events(self) -> list[UserAction]:
+        events: list[UserAction] = []
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return QuitOrNot.QUIT
+        self._clock.tick(self._max_fps)
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        return QuitOrNot.NO_QUIT
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                events.append(UserAction.QUIT)
+                break
 
-                    if event.key == pygame.K_RETURN:
-                        self._auto_collapse = not self._auto_collapse
-                        return QuitOrNot.NO_QUIT
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    events.append(UserAction.COLLAPSE_ONE)
 
-            if self._auto_collapse:
-                return QuitOrNot.NO_QUIT
+                if event.key == pygame.K_g:
+                    events.append(UserAction.COLLAPSE_ALL_SLOWLY)
+
+                if event.key == pygame.K_RETURN:
+                    events.append(UserAction.COLLAPSE_ALL_IMMEDIATELY)
+
+        return events

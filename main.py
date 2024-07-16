@@ -1,4 +1,4 @@
-from gui.view import GUI, QuitOrNot, TileAsset, Rotation
+from gui.view import GUI, UserAction, TileAsset, Rotation
 from wfc import basic
 from pathlib import Path
 
@@ -92,24 +92,34 @@ def main() -> None:
     grid_size = 16
     grid = basic.Grid(grid_size, tiles, weights)
 
+    collapse_slowly = False
+    collapse_one = False
+
     while True:
-        print("Waiting for the user to exit or press <ENTER|SPACE>... ", end="", flush=True)
-        event = gui.handle_events()
-        print("Done.")
+        events = gui.handle_events()
 
-        if event == QuitOrNot.QUIT:
-            return
+        for event in events:
+            if event == UserAction.QUIT:
+                return
 
-        print("Collapsing a single tile superposition... ", end="", flush=True)
-        tile_coordinate = grid.find_lowest_entropy_tile_superposition()
-        if tile_coordinate is not None:
-            grid.collapse_tile_superposition(tile_coordinate)
-        print("Done.")
+            elif event == UserAction.COLLAPSE_ALL_IMMEDIATELY:
+                grid.collapse()
 
-        print("Displaying grid... ", end="", flush=True)
+            elif event == UserAction.COLLAPSE_ONE:
+                collapse_one = True
+
+            elif event == UserAction.COLLAPSE_ALL_SLOWLY:
+                collapse_slowly = not collapse_slowly
+
+        if collapse_slowly or collapse_one:
+            tile_coordinate = grid.find_lowest_entropy_tile_superposition()
+            if tile_coordinate is not None:
+                grid.collapse_tile_superposition(tile_coordinate)
+
+        collapse_one = False
+
         display_data = grid_data_to_display_data(grid, graphics, default_graphic)
         gui.display_grid(display_data)
-        print("Done.")
 
 
 if __name__ == "__main__":
