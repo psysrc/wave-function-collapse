@@ -87,18 +87,18 @@ def main() -> None:
 
     default_graphic = TileAsset(Path("graphics/?.png"))
 
-    gui = GUI()
+    (screen_width, screen_height) = (800, 800)
+    gui = GUI(screen_width, screen_height)
 
     grid_size = 16
     grid = basic.Grid(grid_size, tiles, weights)
 
     collapse_slowly = False
-    collapse_one = False
 
     while True:
         events = gui.handle_events()
 
-        for event in events:
+        for (event, event_data) in events:
             if event == UserAction.QUIT:
                 return
 
@@ -106,17 +106,29 @@ def main() -> None:
                 grid.collapse()
 
             elif event == UserAction.COLLAPSE_ONE:
-                collapse_one = True
+                tile_coordinate = grid.find_lowest_entropy_tile_superposition()
+                if tile_coordinate is not None:
+                    grid.collapse_tile_superposition(tile_coordinate)
 
             elif event == UserAction.COLLAPSE_ALL_SLOWLY:
                 collapse_slowly = not collapse_slowly
 
-        if collapse_slowly or collapse_one:
+            elif event == UserAction.COLLAPSE_SPECIFIC:
+                event_data: tuple[int, int]
+                (click_x, click_y) = event_data
+                print(f"Clicked {(click_x, click_y)}")
+
+                column = int((click_x / screen_width) * grid_size)
+                row = int((click_y / screen_height) * grid_size)
+
+                print(f"Click happened at row {row}, column {column}")
+
+                grid.collapse_tile_superposition((row, column))
+
+        if collapse_slowly:
             tile_coordinate = grid.find_lowest_entropy_tile_superposition()
             if tile_coordinate is not None:
                 grid.collapse_tile_superposition(tile_coordinate)
-
-        collapse_one = False
 
         display_data = grid_data_to_display_data(grid, graphics, default_graphic)
         gui.display_grid(display_data)

@@ -1,3 +1,4 @@
+from typing import Any
 import pygame
 from pathlib import Path
 from enum import IntEnum, Enum
@@ -28,12 +29,13 @@ class UserAction(Enum):
     COLLAPSE_ONE = 2
     COLLAPSE_ALL_SLOWLY = 3
     COLLAPSE_ALL_IMMEDIATELY = 4
+    COLLAPSE_SPECIFIC = 5
 
 
 class GUI:
-    def __init__(self) -> None:
-        self._screen_width = 800
-        self._screen_height = 800
+    def __init__(self, screen_width: int, screen_height: int) -> None:
+        self._screen_width = screen_width
+        self._screen_height = screen_height
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
 
         self._max_fps = 30
@@ -72,25 +74,35 @@ class GUI:
 
         pygame.display.flip()
 
-    def handle_events(self) -> list[UserAction]:
-        events: list[UserAction] = []
+    def handle_events(self) -> list[tuple[UserAction, Any]]:
+        """
+        Handle GUI events from the user.
+
+        Returns a list of tuples where each tuple contains an action/event, plus any associated data.
+        """
+
+        events: list[tuple[UserAction, Any]] = []
 
         self._clock.tick(self._max_fps)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                events.append(UserAction.QUIT)
+                events.append((UserAction.QUIT, None))
                 break
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    events.append(UserAction.COLLAPSE_ONE)
+                    events.append((UserAction.COLLAPSE_ONE, None))
 
                 if event.key == pygame.K_g:
-                    events.append(UserAction.COLLAPSE_ALL_SLOWLY)
+                    events.append((UserAction.COLLAPSE_ALL_SLOWLY, None))
 
                 if event.key == pygame.K_RETURN:
-                    events.append(UserAction.COLLAPSE_ALL_IMMEDIATELY)
+                    events.append((UserAction.COLLAPSE_ALL_IMMEDIATELY, None))
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                (width, height) = pygame.mouse.get_pos()
+                events.append((UserAction.COLLAPSE_SPECIFIC, (width, height)))
 
         return events
