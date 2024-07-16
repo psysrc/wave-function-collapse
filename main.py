@@ -13,12 +13,12 @@ def main() -> None:
     ]
 
     graphics: dict[basic.TileID, TileAsset] = {
-        "grass":      TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/grass-1.png"),
-        "end":        TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/end.png"),
-        "straight":   TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/straight.png"),
-        "corner":     TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/corner.png"),
-        "t-junction": TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/t-junction.png"),
-        "cross":      TileAsset("/home/samuel/Desktop/My_Files/Projects/Pixel Art/cross.png"),
+        "grass":      TileAsset("graphics/grass-1.png"),
+        "end":        TileAsset("graphics/end.png"),
+        "straight":   TileAsset("graphics/straight.png"),
+        "corner":     TileAsset("graphics/corner.png"),
+        "t-junction": TileAsset("graphics/t-junction.png"),
+        "cross":      TileAsset("graphics/cross.png"),
     }
 
     grid_size = 4
