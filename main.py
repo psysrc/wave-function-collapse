@@ -1,3 +1,4 @@
+import random
 from gui.view import GUI, UserAction, TileAsset, Rotation
 from wfc import basic
 from pathlib import Path
@@ -97,6 +98,11 @@ def main() -> None:
     grid = basic.Grid(grid_size, tiles, weights)
 
     collapse_slowly = False
+
+    random.seed()
+    seed = random.randrange(1, 2**32)
+    print(f"Using seed '{seed}'")
+    random.seed(seed)
 
     while True:
         events = gui.handle_events()
