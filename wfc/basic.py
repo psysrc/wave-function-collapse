@@ -60,6 +60,7 @@ class TileSuperposition:
 class TileDefinition:
     id: TileID
     socket_sets: DirectionalSocketSetMap
+    prob_weight: float = 1
     rotatable: bool = False
     flippable: bool = False
 
@@ -68,6 +69,7 @@ class TileDefinition:
 class _InternalTile:
     tile: Tile
     socket_sets: DirectionalSocketSetMap
+    probability_weight: float
 
 
 def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
@@ -81,38 +83,30 @@ def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition)
         _InternalTile(
             Tile(tile_definition.id, rotation=Rotation.NONE, flipped=Flipped.NONE),
             tile_definition.socket_sets,
+            probability_weight=tile_definition.prob_weight,
         )
     ]
 
 
 class _TileSuperposition:
-    def __init__(self, possibilities: list[_InternalTile], weights: list[float] | None = None) -> None:
+    def __init__(self, possibilities: list[_InternalTile]) -> None:
         if len(possibilities) == 0:
             raise RuntimeError("Cannot create a superposition containing zero possibilities")
 
-        if weights is not None:
-            if len(possibilities) != len(weights):
-                raise RuntimeError("Number of weights provided does not match number of possibilities")
-        else:
-            weights = [1.0] * len(possibilities)
-
-        self._possibilities_and_weights: list[tuple[_InternalTile, float]] = list(zip(possibilities.copy(), weights))
+        self._possibilities: list[_InternalTile] = possibilities.copy()
 
     def has_collapsed(self) -> bool:
-        return len(self._possibilities_and_weights) == 1
+        return len(self._possibilities) == 1
 
     def is_valid(self) -> bool:
-        return len(self._possibilities_and_weights) > 0
+        return len(self._possibilities) > 0
 
     def get_possibilities(self) -> list[_InternalTile]:
-        return [pw[0] for pw in self._possibilities_and_weights]
+        return self._possibilities
 
     def remove(self, possibility: _InternalTile) -> None:
-        for pw in self._possibilities_and_weights:
-            match pw:
-                case (p, w) if p == possibility:
-                    self._possibilities_and_weights.remove((p, w))
-                    break
+        if possibility in self._possibilities:
+            self._possibilities.remove(possibility)
 
     def propagate(self, other: "_TileSuperposition", direction: Direction) -> bool:
         """
@@ -123,7 +117,7 @@ class _TileSuperposition:
         """
 
         possible_sockets: SocketSet = set()
-        possible_socketsets: list[SocketSet] = [p.socket_sets[direction] for (p, _) in self._possibilities_and_weights]
+        possible_socketsets: list[SocketSet] = [p.socket_sets[direction] for p in self._possibilities]
         for ss in possible_socketsets:
             possible_sockets = possible_sockets.union(ss)
 
@@ -143,12 +137,12 @@ class _TileSuperposition:
         if not self.is_valid() or self.has_collapsed():
             return
 
-        weights = [w for (_, w) in self._possibilities_and_weights]
+        weights = [p.probability_weight for p in self._possibilities]
 
-        self._possibilities_and_weights = random.choices(self._possibilities_and_weights, weights=weights)
+        self._possibilities = random.choices(self._possibilities, weights=weights)
 
     def get_entropy(self) -> int:
-        return len(self._possibilities_and_weights)
+        return len(self._possibilities)
 
     def get_collapsed_state(self) -> _InternalTile:
         if not self.is_valid():
@@ -157,16 +151,11 @@ class _TileSuperposition:
         if not self.has_collapsed():
             raise RuntimeError("Cannot get collapsed state of an uncollapsed superposition")
 
-        return self._possibilities_and_weights[0][0]
+        return self._possibilities[0]
 
 
 class Grid:
-    def __init__(
-        self,
-        grid_size: int,
-        tile_definitions: list[TileDefinition],
-        weights: list[float] | None = None,
-    ) -> None:
+    def __init__(self, grid_size: int, tile_definitions: list[TileDefinition]) -> None:
         self._grid_size = grid_size
 
         self._tiles: list[_InternalTile] = []
@@ -174,7 +163,7 @@ class Grid:
             self._tiles.extend(_create_internal_tiles_from_tile_definition(tile_def))
 
         self._tile_superpositions: list[list[_TileSuperposition]] = [
-            [_TileSuperposition(self._tiles, weights) for _ in range(grid_size)] for _ in range(grid_size)
+            [_TileSuperposition(self._tiles) for _ in range(grid_size)] for _ in range(grid_size)
         ]
 
     def is_valid(self) -> bool:

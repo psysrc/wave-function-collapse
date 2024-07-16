@@ -35,45 +35,24 @@ def grid_data_to_display_data(
 
 def main() -> None:
     tiles: list[basic.TileDefinition] = [
-        basic.TileDefinition("grass1", {DIR.LEFT: {"g1", "g2"}, DIR.UP: {"g1", "g2"}, DIR.DOWN: {"g1", "g2"}, DIR.RIGHT: {"g1", "g2"}}),
-        basic.TileDefinition("grass2", {DIR.LEFT: {"g2", "g3"}, DIR.UP: {"g2", "g3"}, DIR.DOWN: {"g2", "g3"}, DIR.RIGHT: {"g2", "g3"}}),
-        basic.TileDefinition("grass3", {DIR.LEFT: {"g3"}, DIR.UP: {"g3"}, DIR.DOWN: {"g3"}, DIR.RIGHT: {"g3"}}),
-        basic.TileDefinition("end_r0", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("end_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("end_r2", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("end_r3", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("straight_r0", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("straight_r1", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r0", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("corner_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r2", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("corner_r3", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("t-junction_r0", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r2", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-        basic.TileDefinition("t-junction_r3", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}),
-        basic.TileDefinition("cross", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}),
-    ]
-
-    weights: list[float] = [
-        15,  # grass1
-        5,  # grass2
-        5,  # grass3
-        0.25,  # end_r0
-        0.25,  # end_r1
-        0.25,  # end_r2
-        0.25,  # end_r3
-        10,  # straight_r0
-        10,  # straight_r1
-        0.25,  # corner_r0
-        0.25,  # corner_r1
-        0.25,  # corner_r2
-        0.25,  # corner_r3
-        0.25,  # t-junction_r0
-        0.25,  # t-junction_r1
-        0.25,  # t-junction_r2
-        0.25,  # t-junction_r3
-        1,  # cross
+        basic.TileDefinition("grass1", {DIR.LEFT: {"g1", "g2"}, DIR.UP: {"g1", "g2"}, DIR.DOWN: {"g1", "g2"}, DIR.RIGHT: {"g1", "g2"}}, prob_weight=15),
+        basic.TileDefinition("grass2", {DIR.LEFT: {"g2", "g3"}, DIR.UP: {"g2", "g3"}, DIR.DOWN: {"g2", "g3"}, DIR.RIGHT: {"g2", "g3"}}, prob_weight=5),
+        basic.TileDefinition("grass3", {DIR.LEFT: {"g3"}, DIR.UP: {"g3"}, DIR.DOWN: {"g3"}, DIR.RIGHT: {"g3"}}, prob_weight=5),
+        basic.TileDefinition("end_r0", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("end_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("end_r2", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("end_r3", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("straight_r0", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}, prob_weight=10),
+        basic.TileDefinition("straight_r1", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}, prob_weight=10),
+        basic.TileDefinition("corner_r0", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("corner_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("corner_r2", {DIR.LEFT: {"g1"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("corner_r3", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("t-junction_r0", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("t-junction_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("t-junction_r2", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}, prob_weight=0.25),
+        basic.TileDefinition("t-junction_r3", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
+        basic.TileDefinition("cross", {DIR.LEFT: {"r"}, DIR.UP: {"r"}, DIR.DOWN: {"r"}, DIR.RIGHT: {"r"}}, prob_weight=1),
     ]
 
     graphics: dict[basic.TileID, TileAsset] = {
@@ -104,7 +83,7 @@ def main() -> None:
     gui = GUI(screen_width, screen_height)
 
     grid_size = 32
-    grid = basic.Grid(grid_size, tiles, weights)
+    grid = basic.Grid(grid_size, tiles)
 
     collapse_slowly = False
 
