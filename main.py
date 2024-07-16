@@ -46,9 +46,9 @@ def main() -> None:
     ]
 
     weights: list[float] = [
-        1,  # grass1
-        1,  # grass2
-        15,  # grass3
+        15,  # grass1
+        5,  # grass2
+        5,  # grass3
         0.25,  # end_r0
         0.25,  # end_r1
         0.25,  # end_r2
@@ -93,7 +93,7 @@ def main() -> None:
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
 
-    grid_size = 16
+    grid_size = 32
     grid = basic.Grid(grid_size, tiles, weights)
 
     collapse_slowly = False
