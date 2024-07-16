@@ -1,27 +1,32 @@
 import pygame
 
-def display() -> None:
-    resolution = (800, 800)
+Colour = tuple[int, int, int]
+
+def display_grid(rows: int, columns: int, grid_data: list[list[Colour]]) -> None:
+    width = 800
+    height = 800
+    resolution = (width, height)
     screen = pygame.display.set_mode(resolution)
 
-    height = 8
-    width = 8
-    block_size = 100
+    max_fps = 5
+
+    cell_height = height / rows
+    cell_width = width / columns
 
     clock = pygame.time.Clock()  # to set max FPS
 
-    screen.fill((0, 0, 0))  # Fill screen with black color.
+    screen.fill((0, 0, 0))  # Fill screen with black
 
-    for y in range(height):
-        for x in range(width):
-            color = (x*25, y*25, 0)
+    for row in range(rows):
+        for column in range(columns):
+            color: Colour = grid_data[row][column]
 
-            rect = pygame.Rect(x*block_size, y*block_size, block_size, block_size)
+            rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
             pygame.draw.rect(screen, color, rect)
 
     while True:
         pygame.display.flip()  # Update the screen.
-        clock.tick(10)  # max FPS = 10
+        clock.tick(max_fps)  # max FPS = 10
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
