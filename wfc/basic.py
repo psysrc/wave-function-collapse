@@ -1,5 +1,8 @@
+from dataclasses import dataclass
 import random
 from enum import Enum
+from helpers.rotation import Rotation
+from helpers.flipped import Flipped
 
 
 class Direction(Enum):
@@ -22,8 +25,38 @@ DirectionSocketSetMap = dict[Direction, SocketSet]
 Coordinate = tuple[int, int]
 
 
+class Superposition(Enum):
+    """Describes the state of a superposition."""
+
+    SUPERPOSITION = 0
+    COLLAPSED = 1
+    INVALID = 2
+
+
+@dataclass
 class Tile:
-    def __init__(self, id: TileID, socketsets: DirectionSocketSetMap, rotatable: bool = True, flippable: bool = True) -> None:
+    """Describes a tile in a specific position."""
+
+    id: TileID
+    rotation: Rotation
+    flipped: Flipped
+
+
+@dataclass
+class TileSuperposition:
+    """Describes a superposition of tiles."""
+
+    superposition: Superposition
+
+    tile: Tile | None
+    """
+    If the `superposition` field is `SUPERPOSITION` or `INVALID`, this field will be `None`.
+    Otherwise, this field will contain a valid `Tile` instance.
+    """
+
+
+class InternalTile:
+    def __init__(self, id: TileID, socketsets: DirectionSocketSetMap, rotatable: bool = False, flippable: bool = False) -> None:
         self._id: TileID = id
         self._socketsets: DirectionSocketSetMap = socketsets
 
@@ -37,8 +70,8 @@ class Tile:
         return self._id
 
 
-class TileSuperposition:
-    def __init__(self, possibilities: list[Tile], weights: list[float] | None = None) -> None:
+class _TileSuperposition:
+    def __init__(self, possibilities: list[InternalTile], weights: list[float] | None = None) -> None:
         if len(possibilities) == 0:
             raise RuntimeError("Cannot create a superposition containing zero possibilities")
 
@@ -48,7 +81,7 @@ class TileSuperposition:
         else:
             weights = [1.0] * len(possibilities)
 
-        self._possibilities_and_weights: list[tuple[Tile, float]] = list(zip(possibilities.copy(), weights))
+        self._possibilities_and_weights: list[tuple[InternalTile, float]] = list(zip(possibilities.copy(), weights))
 
     def has_collapsed(self) -> bool:
         return len(self._possibilities_and_weights) == 1
@@ -56,17 +89,17 @@ class TileSuperposition:
     def is_valid(self) -> bool:
         return len(self._possibilities_and_weights) > 0
 
-    def get_possibilities(self) -> list[Tile]:
+    def get_possibilities(self) -> list[InternalTile]:
         return [pw[0] for pw in self._possibilities_and_weights]
 
-    def remove(self, possibility: Tile) -> None:
+    def remove(self, possibility: InternalTile) -> None:
         for pw in self._possibilities_and_weights:
             match pw:
                 case (p, w) if p == possibility:
                     self._possibilities_and_weights.remove((p, w))
                     break
 
-    def propagate(self, other: "TileSuperposition", direction: Direction) -> bool:
+    def propagate(self, other: "_TileSuperposition", direction: Direction) -> bool:
         """
         Given the remaining possible states for this superposition, and therefore the remaining possible sockets
         in the given direction, propagate this information to the other superposition.
@@ -79,7 +112,7 @@ class TileSuperposition:
         for ss in possible_socketsets:
             possible_sockets = possible_sockets.union(ss)
 
-        possibilities_to_remove: list[Tile] = []
+        possibilities_to_remove: list[InternalTile] = []
         for other_possibility in other.get_possibilities():
             if other_possibility.get_socketset(_opposite_direction[direction]).isdisjoint(possible_sockets):
                 possibilities_to_remove.append(other_possibility)
@@ -102,7 +135,7 @@ class TileSuperposition:
     def get_entropy(self) -> int:
         return len(self._possibilities_and_weights)
 
-    def get_collapsed_state(self) -> Tile:
+    def get_collapsed_state(self) -> InternalTile:
         if not self.is_valid():
             raise RuntimeError("Cannot get collapsed state of an invalid supoerposition")
 
@@ -113,11 +146,11 @@ class TileSuperposition:
 
 
 class Grid:
-    def __init__(self, grid_size: int, tiles: list[Tile], weights: list[float] | None = None) -> None:
+    def __init__(self, grid_size: int, tiles: list[InternalTile], weights: list[float] | None = None) -> None:
         self._grid_size = grid_size
         self._tiles = tiles
-        self._tile_superpositions: list[list[TileSuperposition]] = [
-            [TileSuperposition(self._tiles, weights) for _ in range(grid_size)] for _ in range(grid_size)
+        self._tile_superpositions: list[list[_TileSuperposition]] = [
+            [_TileSuperposition(self._tiles, weights) for _ in range(grid_size)] for _ in range(grid_size)
         ]
 
     def is_valid(self) -> bool:
@@ -128,11 +161,27 @@ class Grid:
 
         return True
 
+    def has_collapsed(self) -> bool:
+        for row in self._tile_superpositions:
+            for tile_superposition in row:
+                if not tile_superposition.has_collapsed():
+                    return False
+
+        return True
+
+
     def get_grid_size(self) -> int:
         return self._grid_size
 
-    def get_grid(self) -> list[list[TileSuperposition]]:
+    def get_grid(self) -> list[list[_TileSuperposition]]:
         return self._tile_superpositions
+
+    # def get_collapsed_grid(self) -> list[list[TileSuperpositionState]]
+    #     if not self.has_collapsed():
+    #         raise RuntimeError("Cannot get collapsed grid when the grid still contains superpositions")
+
+
+
 
     def collapse(self) -> None:
         """Collapse the whole grid into a single known state."""
@@ -145,7 +194,7 @@ class Grid:
 
             self.collapse_tile_superposition(lowest_entropy_coordinate)
 
-    def _get_tile_superposition(self, coordinate: Coordinate) -> TileSuperposition:
+    def _get_tile_superposition(self, coordinate: Coordinate) -> _TileSuperposition:
         return self._tile_superpositions[coordinate[0]][coordinate[1]]
 
     def _is_coordinate_valid(self, coordinate: Coordinate) -> bool:
@@ -236,7 +285,7 @@ class Grid:
 
     def pretty_print_grid_state(self) -> str:
         output: str = ""
-        for row in self.get_grid():
+        for row in self._tile_superpositions:
             for tile in row:
                 output += f"{[p.get_id() for p in tile.get_possibilities()]}, "
 
