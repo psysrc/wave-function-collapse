@@ -2,6 +2,19 @@ from gui.view import display_grid, TileAsset
 from wfc import basic
 
 
+def display_wfc_grid(grid: basic.Grid, graphics: dict[basic.TileID, TileAsset]) -> None:
+    grid_size = grid.get_grid_size()
+
+    grid_data: list[list[TileAsset]] = [[TileAsset() for _ in range(grid_size)] for _ in range(grid_size)]
+
+    for row_idx, row in enumerate(grid.get_grid()):
+        for col_idx, tile in enumerate(row):
+            grid_data[row_idx][col_idx] = graphics[tile.get_collapsed_state().get_id()]
+
+    display_grid(grid_size, grid_size, grid_data)
+
+
+
 def main() -> None:
     tiles: list[basic.Tile] = [
         basic.Tile("grass",      {basic.Direction.LEFT: "g", basic.Direction.UP: "g", basic.Direction.DOWN: "g", basic.Direction.RIGHT: "g"}),
@@ -21,20 +34,18 @@ def main() -> None:
         "cross":      TileAsset("graphics/cross.png"),
     }
 
-    grid_size = 4
+    grid_size = 16
     grid = basic.Grid(grid_size, tiles)
 
+    print("Collapsing grid... ", end="", flush=True)
     grid.collapse()
+    print("Done:")
 
     print(grid.pretty_print_grid_state())
 
-    grid_data: list[list[TileAsset]] = [[TileAsset() for _ in range(grid_size)] for _ in range(grid_size)]
-
-    for row_idx, row in enumerate(grid.get_grid()):
-        for col_idx, tile in enumerate(row):
-            grid_data[row_idx][col_idx] = graphics[tile.get_collapsed_state().get_id()]
-
-    display_grid(grid_size, grid_size, grid_data)
+    print("Displaying grid... ", end="", flush=True)
+    display_wfc_grid(grid, graphics)
+    print("Done.")
 
 
 if __name__ == "__main__":

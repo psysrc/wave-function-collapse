@@ -18,10 +18,19 @@ def display_grid(rows: int, columns: int, grid_data: list[list[TileAsset]]) -> N
 
     screen.fill((0, 0, 0))  # Fill screen with black
 
+    all_tile_assets: set[TileAsset] = set()
+    for g in grid_data:
+        for gg in g:
+            all_tile_assets.add(gg)
+
+    loaded_tile_assets: dict[TileAsset, pygame.Surface] = {
+        asset: pygame.image.load(asset) for asset in all_tile_assets
+    }
+
     for row in range(rows):
         for column in range(columns):
             image_path = grid_data[row][column]
-            image = pygame.image.load(image_path)
+            image = loaded_tile_assets[image_path]
             rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
             image = pygame.transform.scale(image, (cell_width, cell_height))
 

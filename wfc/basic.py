@@ -100,6 +100,9 @@ class Grid:
             [TileSuperposition(self._tiles) for _ in range(grid_size)] for _ in range(grid_size)
         ]
 
+    def get_grid_size(self) -> int:
+        return self._grid_size
+
     def get_grid(self) -> list[list[TileSuperposition]]:
         return self._tile_superpositions
 
