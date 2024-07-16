@@ -85,7 +85,7 @@ def main() -> None:
         "cross":         TileAsset(Path("graphics/cross.png")),
     }
 
-    default_graphic = TileAsset(Path("graphics/?.png"))
+    default_graphic = TileAsset(Path("graphics/unknown.png"))
 
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
