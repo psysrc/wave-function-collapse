@@ -1,7 +1,26 @@
 import pygame
 from pathlib import Path
+from enum import IntEnum
 
-TileAsset = Path
+
+class Rotation(IntEnum):
+    NONE = 0
+    CLOCKWISE = 90
+    HALF = 180
+    ANTICLOCKWISE = 270
+
+
+class TileAsset:
+    def __init__(self, image_path: Path, rotation: Rotation = Rotation.NONE) -> None:
+        self._filepath = image_path
+        self._rotation = rotation
+
+    def get_image_path(self) -> Path:
+        return self._filepath
+
+    def get_rotation(self) -> Rotation:
+        return self._rotation
+
 
 def display_grid(rows: int, columns: int, grid_data: list[list[TileAsset]]) -> None:
     width = 800
@@ -24,16 +43,17 @@ def display_grid(rows: int, columns: int, grid_data: list[list[TileAsset]]) -> N
             all_tile_assets.add(gg)
 
     loaded_tile_assets: dict[TileAsset, pygame.Surface] = {
-        asset: pygame.image.load(asset) for asset in all_tile_assets
+        asset: pygame.image.load(asset.get_image_path()) for asset in all_tile_assets
     }
 
     for row in range(rows):
         for column in range(columns):
-            image_path = grid_data[row][column]
-            image = loaded_tile_assets[image_path]
-            rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
+            asset = grid_data[row][column]
+            image = loaded_tile_assets[asset]
+            image = pygame.transform.rotate(image, asset.get_rotation())
             image = pygame.transform.scale(image, (cell_width, cell_height))
 
+            rect = pygame.Rect(column*cell_width, row*cell_height, cell_width, cell_height)
             screen.blit(image, rect)
 
     while True:

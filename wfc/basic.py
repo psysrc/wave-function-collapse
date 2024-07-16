@@ -17,8 +17,8 @@ _opposite_direction = {
 
 TileID = int | str
 Socket = int | str
-Coordinate = tuple[int, int]
 Sockets = dict[Direction, Socket]
+Coordinate = tuple[int, int]
 
 
 class Tile:
