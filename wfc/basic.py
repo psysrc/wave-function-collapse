@@ -79,6 +79,12 @@ class _InternalTile:
 
 
 def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
+    if tile_definition.rotatable:
+        raise NotImplementedError("Rotatable tiles are currently unsupported")  # TODO
+
+    if tile_definition.flippable:
+        raise NotImplementedError("Flipped tiles are currently unsupported")  # TODO
+
     return [_InternalTile(tile_definition.id, tile_definition.socket_sets)]
 
 
