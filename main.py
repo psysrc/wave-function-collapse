@@ -6,14 +6,17 @@ from pathlib import Path
 DIR = basic.Direction
 
 
-def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset]) -> list[list[TileAsset]]:
+def grid_data_to_display_data(grid: basic.Grid, graphics_map: dict[basic.TileID, TileAsset], default_graphic: TileAsset) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
     grid_data: list[list[TileAsset]] = [[TileAsset(Path()) for _ in range(grid_size)] for _ in range(grid_size)]
 
     for row_idx, row in enumerate(grid.get_grid()):
         for col_idx, tile in enumerate(row):
-            grid_data[row_idx][col_idx] = graphics_map[tile.get_collapsed_state().get_id()]
+            if tile.has_collapsed():
+                grid_data[row_idx][col_idx] = graphics_map[tile.get_collapsed_state().get_id()]
+            else:
+                grid_data[row_idx][col_idx] = default_graphic
 
     return grid_data
 
@@ -82,25 +85,29 @@ def main() -> None:
         "cross":         TileAsset(Path("graphics/cross.png")),
     }
 
+    default_graphic = TileAsset(Path("graphics/?.png"))
+
     gui = GUI()
 
     grid_size = 16
     grid = basic.Grid(grid_size, tiles, weights)
 
     while True:
-        print("Waiting for the user to exit or press <ENTER>... ", end="", flush=True)
+        print("Waiting for the user to exit or press <ENTER|SPACE>... ", end="", flush=True)
         event = gui.handle_events()
         print("Done.")
 
         if event == QuitOrNot.QUIT:
             return
 
-        print("Collapsing grid... ", end="", flush=True)
-        grid.collapse()
+        print("Collapsing a single tile superposition... ", end="", flush=True)
+        tile_coordinate = grid.find_lowest_entropy_tile_superposition()
+        if tile_coordinate is not None:
+            grid.collapse_tile_superposition(tile_coordinate)
         print("Done.")
 
         print("Displaying grid... ", end="", flush=True)
-        display_data = grid_data_to_display_data(grid, graphics)
+        display_data = grid_data_to_display_data(grid, graphics, default_graphic)
         gui.display_grid(display_data)
         print("Done.")
 

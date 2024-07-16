@@ -37,6 +37,8 @@ class GUI:
 
         self._clock = pygame.time.Clock()
 
+        self._auto_collapse = False
+
     def display_grid(self, grid_data: list[list[TileAsset]]) -> None:
         """Displays the grid data and waits for the user to press a button."""
 
@@ -81,5 +83,12 @@ class GUI:
                     return QuitOrNot.QUIT
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_SPACE:
                         return QuitOrNot.NO_QUIT
+
+                    if event.key == pygame.K_RETURN:
+                        self._auto_collapse = not self._auto_collapse
+                        return QuitOrNot.NO_QUIT
+
+            if self._auto_collapse:
+                return QuitOrNot.NO_QUIT

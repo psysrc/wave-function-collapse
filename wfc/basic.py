@@ -119,10 +119,15 @@ class Grid:
         return self._tile_superpositions
 
     def collapse(self) -> None:
-        still_collapsing = True
+        """Collapse the whole grid into a single known state."""
 
-        while still_collapsing:
-            still_collapsing = self._collapse_lowest_entropy_tile_superposition()
+        while True:
+            lowest_entropy_coordinate: Coordinate | None = self.find_lowest_entropy_tile_superposition()
+
+            if lowest_entropy_coordinate is None:
+                break
+
+            self.collapse_tile_superposition(lowest_entropy_coordinate)
 
     def _get_tile_superposition(self, coordinate: Coordinate) -> TileSuperposition:
         return self._tile_superpositions[coordinate[0]][coordinate[1]]
@@ -154,13 +159,11 @@ class Grid:
 
         return neighbours
 
-    def _collapse_lowest_entropy_tile_superposition(self) -> bool:
+    def find_lowest_entropy_tile_superposition(self) -> Coordinate | None:
         """
-        Collapse a single tile superposition down to a known state, and propagate the changes to the rest of the grid.
+        Return the tile coordinate that has the lowest entropy, or `None` if the grid is fully collapsed.
+        """
 
-        Returns `True` if this was completed successfully.
-        Returns `False` otherwise, including when the grid is in a completely known state.
-        """
         lowest_entropy_indices: list[Coordinate] = []
         lowest_entropy: int = 99999
 
@@ -178,12 +181,21 @@ class Grid:
                         lowest_entropy_indices.append((row_idx, col_idx))
 
         if len(lowest_entropy_indices) == 0:
-            return False
+            return None
 
         lowest_entropy_index = random.choice(lowest_entropy_indices)
+        return lowest_entropy_index
 
-        self._get_tile_superposition(lowest_entropy_index).collapse()
-        neighbours_to_propagate_to = self._get_valid_neighbours(lowest_entropy_index)
+    def collapse_tile_superposition(self, coordinate: Coordinate) -> bool:
+        """
+        Collapse a single tile superposition down to a known state, and propagate the changes to the rest of the grid.
+
+        Returns `True` if this was completed successfully.
+        Returns `False` otherwise, including when the grid is in a completely known state.
+        """
+
+        self._get_tile_superposition(coordinate).collapse()
+        neighbours_to_propagate_to = self._get_valid_neighbours(coordinate)
 
         while len(neighbours_to_propagate_to) > 0:
             ((source_coords, direction), neighbour_coords) = neighbours_to_propagate_to.popitem()
@@ -203,6 +215,7 @@ class Grid:
                         neighbours_to_propagate_to[key] = new_neighbour
 
         return True
+
 
 
     def pretty_print_grid_state(self) -> str:
