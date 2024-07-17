@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import random
 from enum import Enum
 from helpers.rotation import Rotation
-from helpers.flipped import Flipped
+from helpers.flip import Flip
 
 
 class Direction(Enum):
@@ -40,7 +40,7 @@ class Tile:
 
     id: TileID
     rotation: Rotation = Rotation.NONE
-    flipped: Flipped = Flipped.NONE
+    flipped: Flip = Flip.NONE
 
 
 @dataclass
