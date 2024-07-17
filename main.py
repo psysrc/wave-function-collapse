@@ -35,8 +35,12 @@ def grid_data_to_display_data(
 
 def main() -> None:
     tiles: list[basic.TileDefinition] = [
-        basic.TileDefinition("grass1", {DIR.LEFT: {"g1", "g2"}, DIR.UP: {"g1", "g2"}, DIR.DOWN: {"g1", "g2"}, DIR.RIGHT: {"g1", "g2"}}, prob_weight=15),
-        basic.TileDefinition("grass2", {DIR.LEFT: {"g2", "g3"}, DIR.UP: {"g2", "g3"}, DIR.DOWN: {"g2", "g3"}, DIR.RIGHT: {"g2", "g3"}}, prob_weight=5),
+        basic.TileDefinition(
+            "grass1", {DIR.LEFT: {"g1", "g2"}, DIR.UP: {"g1", "g2"}, DIR.DOWN: {"g1", "g2"}, DIR.RIGHT: {"g1", "g2"}}, prob_weight=15
+        ),
+        basic.TileDefinition(
+            "grass2", {DIR.LEFT: {"g2", "g3"}, DIR.UP: {"g2", "g3"}, DIR.DOWN: {"g2", "g3"}, DIR.RIGHT: {"g2", "g3"}}, prob_weight=5
+        ),
         basic.TileDefinition("grass3", {DIR.LEFT: {"g3"}, DIR.UP: {"g3"}, DIR.DOWN: {"g3"}, DIR.RIGHT: {"g3"}}, prob_weight=5),
         basic.TileDefinition("end_r0", {DIR.LEFT: {"r"}, DIR.UP: {"g1"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),
         basic.TileDefinition("end_r1", {DIR.LEFT: {"g1"}, DIR.UP: {"r"}, DIR.DOWN: {"g1"}, DIR.RIGHT: {"g1"}}, prob_weight=0.25),

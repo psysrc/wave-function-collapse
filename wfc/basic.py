@@ -72,22 +72,6 @@ class _InternalTile:
     probability_weight: float
 
 
-def _create_internal_tiles_from_tile_definition(tile_definition: TileDefinition) -> list[_InternalTile]:
-    if tile_definition.rotatable:
-        raise NotImplementedError("Rotatable tiles are currently unsupported")  # TODO
-
-    if tile_definition.flippable:
-        raise NotImplementedError("Flipped tiles are currently unsupported")  # TODO
-
-    return [
-        _InternalTile(
-            Tile(tile_definition.id, rotation=Rotation.NONE, flipped=Flipped.NONE),
-            tile_definition.socket_sets,
-            probability_weight=tile_definition.prob_weight,
-        )
-    ]
-
-
 class _TileSuperposition:
     def __init__(self, possibilities: list[_InternalTile]) -> None:
         if len(possibilities) == 0:
@@ -160,7 +144,7 @@ class Grid:
 
         self._tiles: list[_InternalTile] = []
         for tile_def in tile_definitions:
-            self._tiles.extend(_create_internal_tiles_from_tile_definition(tile_def))
+            self._tiles.append(_InternalTile(Tile(tile_def.id), tile_def.socket_sets, tile_def.prob_weight))
 
         self._tile_superpositions: list[list[_TileSuperposition]] = [
             [_TileSuperposition(self._tiles) for _ in range(grid_size)] for _ in range(grid_size)
