@@ -53,17 +53,17 @@ def main() -> None:
 
     tile_definitions: list[basic.TileDefinition] = [
         basic.TileDefinition(
-            "grass1", {DIR.LEFT: {g1, g2}, DIR.UP: {g1, g2}, DIR.DOWN: {g1, g2}, DIR.RIGHT: {g1, g2}}, prob_weight=15
+            "grass1", {DIR.LEFT: {g1, g2}, DIR.UP: {g1, g2}, DIR.DOWN: {g1, g2}, DIR.RIGHT: {g1, g2}}, prob_weight=30,
         ),
         basic.TileDefinition(
-            "grass2", {DIR.LEFT: {g2, g3}, DIR.UP: {g2, g3}, DIR.DOWN: {g2, g3}, DIR.RIGHT: {g2, g3}}, prob_weight=5
+            "grass2", {DIR.LEFT: {g2, g3}, DIR.UP: {g2, g3}, DIR.DOWN: {g2, g3}, DIR.RIGHT: {g2, g3}}, prob_weight=10,
         ),
-        basic.TileDefinition("grass3", {DIR.LEFT: {g3}, DIR.UP: {g3}, DIR.DOWN: {g3}, DIR.RIGHT: {g3}}, prob_weight=5),
-        basic.TileDefinition("end", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25, allowed_rotations=AllRotations),
-        basic.TileDefinition("straight", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=10, allowed_rotations={Rotation.CLOCKWISE}),
-        basic.TileDefinition("corner", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25, allowed_rotations=AllRotations),
-        basic.TileDefinition("t-junction", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=0.25, allowed_rotations=AllRotations),
-        basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=1),
+        basic.TileDefinition("grass3", {DIR.LEFT: {g3}, DIR.UP: {g3}, DIR.DOWN: {g3}, DIR.RIGHT: {g3}}, prob_weight=10),
+        basic.TileDefinition("end", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, allowed_rotations=AllRotations),
+        basic.TileDefinition("straight", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=15, allowed_rotations={Rotation.CLOCKWISE}),
+        basic.TileDefinition("corner", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, allowed_rotations=AllRotations),
+        basic.TileDefinition("t-junction", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, allowed_rotations=AllRotations),
+        basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}),
     ]
 
     graphics: dict[basic.TileID, Path] = {
@@ -83,7 +83,7 @@ def main() -> None:
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
 
-    grid_size = 32
+    grid_size = 16
     grid = basic.Grid(grid_size, tile_definitions)
 
     collapse_slowly = False
