@@ -3,6 +3,7 @@ import random
 from enum import Enum
 from helpers.rotation import Rotation
 from helpers.flip import Flip
+from wfc.abstract_socket import Socket
 
 
 class Direction(Enum):
@@ -19,8 +20,8 @@ _opposite_direction = {
     Direction.RIGHT: Direction.LEFT,
 }
 
+
 TileID = int | str
-Socket = int | str
 SocketSet = set[Socket]
 DirectionalSocketSetMap = dict[Direction, SocketSet]
 Coordinate = tuple[int, int]
