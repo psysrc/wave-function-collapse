@@ -2,29 +2,29 @@
 version: 1
 
 sockets:
-  - name: g1
+  - id: g1
     type: symmetric
 
-  - name: g2
+  - id: g2
     type: symmetric
 
-  - name: g3
+  - id: g3
     type: symmetric
 
-  - name: r
+  - id: r
     type: symmetric
 
 
 tiles:
-  - name: "grass1"
-    prob_weight: 10
+  - id: "grass1"
+    prob_weight: 25
     sockets:
       left: [g1, g2]
       up: [g1, g2]
       down: [g1, g2]
       right: [g1, g2]
 
-  - name: "grass2"
+  - id: "grass2"
     prob_weight: 5
     sockets:
       left: [g2, g3]
@@ -32,7 +32,7 @@ tiles:
       down: [g2, g3]
       right: [g2, g3]
 
-  - name: "grass3"
+  - id: "grass3"
     prob_weight: 5
     sockets:
       left: [g3]
@@ -40,7 +40,7 @@ tiles:
       down: [g3]
       right: [g3]
 
-  - name: "road_end"
+  - id: "road_end"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -49,7 +49,7 @@ tiles:
       down: [g1]
       right: [g1]
 
-  - name: "road_straight"
+  - id: "road_straight"
     allowed_rotations: [clockwise]
     prob_weight: 10
     sockets:
@@ -58,7 +58,7 @@ tiles:
       down: [r]
       right: [g1]
 
-  - name: "road_corner"
+  - id: "road_corner"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -67,7 +67,7 @@ tiles:
       down: [g1]
       right: [g1]
 
-  - name: "road_t_junction"
+  - id: "road_t_junction"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -76,7 +76,7 @@ tiles:
       down: [g1]
       right: [r]
 
-  - name: "road_cross"
+  - id: "road_cross"
     prob_weight: 1
     sockets:
       left: [r]

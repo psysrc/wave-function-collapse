@@ -2,19 +2,19 @@
 version: 1
 
 sockets:
-  - name: bg
+  - id: bg
     type: symmetric
 
-  - name: bc
+  - id: bc
     type: symmetric
 
-  - name: be
+  - id: be
     type: asymmetric
     counterpart: be_f
 
 
 tiles:
-  - name: "background"
+  - id: "background"
     prob_weight: 6
     sockets:
       left: [bg]
@@ -22,7 +22,7 @@ tiles:
       down: [bg]
       right: [bg]
 
-  - name: "block-center"
+  - id: "block-center"
     prob_weight: 1
     sockets:
       left: [bc]
@@ -30,7 +30,7 @@ tiles:
       down: [bc]
       right: [bc]
 
-  - name: "block-edge"
+  - id: "block-edge"
     prob_weight: 1
     allowed_rotations: [clockwise, anticlockwise, half]
     sockets:
@@ -39,7 +39,7 @@ tiles:
       down: [be_f]
       right: [bg]
 
-  - name: "block-corner"
+  - id: "block-corner"
     prob_weight: 1
     allowed_rotations: [clockwise, anticlockwise, half]
     sockets:
