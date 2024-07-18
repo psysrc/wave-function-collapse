@@ -7,6 +7,9 @@ from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap, rotate_soc
 from helpers.direction import Direction, opposite_direction
 
 
+Entropy = int
+
+
 class Superposition(Enum):
     """Describes the state of a superposition."""
 
@@ -96,7 +99,7 @@ class _TileSuperposition:
 
         self._possibilities = [final_state]
 
-    def get_entropy(self) -> int:
+    def get_entropy(self) -> Entropy:
         return len(self._possibilities)
 
     def get_collapsed_state(self) -> _InternalTileDeployment:
@@ -220,7 +223,7 @@ class Grid:
         """
 
         lowest_entropy_indices: list[Coordinate] = []
-        lowest_entropy: int = 99999
+        lowest_entropy: Entropy = 99999
 
         for row_idx, row in enumerate(self._tile_superpositions):
             for col_idx, tile_superposition in enumerate(row):
