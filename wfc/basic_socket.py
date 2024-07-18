@@ -16,6 +16,9 @@ class BasicSocket(Socket):
         self._type = type
         self._flipped = False
 
+    def get_id(self) -> SocketID:
+        return self._id
+
     def compatible_with(self, other: Socket) -> bool:
         """Decide if this socket is compatible with another socket or not."""
 
