@@ -15,3 +15,19 @@ opposite_direction = {
     Direction.RIGHT: Direction.LEFT,
 }
 """Maps directions onto their opposites. For example, UP --> DOWN."""
+
+
+move_clockwise: dict[Direction, Direction] = {
+    Direction.UP: Direction.RIGHT,
+    Direction.RIGHT: Direction.DOWN,
+    Direction.DOWN: Direction.LEFT,
+    Direction.LEFT: Direction.UP,
+}
+
+
+move_anticlockwise: dict[Direction, Direction] = {
+    Direction.UP: Direction.LEFT,
+    Direction.LEFT: Direction.DOWN,
+    Direction.DOWN: Direction.RIGHT,
+    Direction.RIGHT: Direction.UP,
+}
