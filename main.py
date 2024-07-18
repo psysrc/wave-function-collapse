@@ -1,8 +1,10 @@
+import argparse
 import random
 from gui.view import GUI, UserAction, TileAsset, Rotation
 from wfc import basic
 from pathlib import Path
 from wfc.basic_socket import BasicSocket, SocketType
+from rule_loaders.yaml_loader import YamlLoader
 
 
 DIR = basic.Direction
@@ -35,12 +37,19 @@ def grid_data_to_display_data(
 
 
 def main() -> None:
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("-r", "--rules", required=True)
+
+    # args = parser.parse_args()
+
+    # tile_definitions = YamlLoader(args.rules).load()
+
     r = BasicSocket("r", SocketType.SYMMETRIC)
     g1 = BasicSocket("g1", SocketType.SYMMETRIC)
     g2 = BasicSocket("g2", SocketType.SYMMETRIC)
     g3 = BasicSocket("g3", SocketType.SYMMETRIC)
 
-    tiles: list[basic.TileDefinition] = [
+    tile_definitions: list[basic.TileDefinition] = [
         basic.TileDefinition(
             "grass1", {DIR.LEFT: {g1, g2}, DIR.UP: {g1, g2}, DIR.DOWN: {g1, g2}, DIR.RIGHT: {g1, g2}}, prob_weight=15
         ),
@@ -93,7 +102,7 @@ def main() -> None:
     gui = GUI(screen_width, screen_height)
 
     grid_size = 32
-    grid = basic.Grid(grid_size, tiles)
+    grid = basic.Grid(grid_size, tile_definitions)
 
     collapse_slowly = False
 
