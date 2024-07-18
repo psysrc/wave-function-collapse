@@ -83,7 +83,7 @@ def main() -> None:
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
 
-    grid_size = 16
+    grid_size = 32
     grid = basic.Grid(grid_size, tile_definitions)
 
     collapse_slowly = False
