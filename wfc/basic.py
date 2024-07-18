@@ -3,27 +3,12 @@ import random
 from enum import Enum
 from helpers.rotation import Rotation
 from helpers.flip import Flip
-from wfc.abstract_socket import Socket
+from wfc.abstract_socket import SocketSet
+from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap
+from helpers.direction import Direction, opposite_direction
 
 
-class Direction(Enum):
-    LEFT = 0
-    UP = 1
-    DOWN = 2
-    RIGHT = 3
 
-
-_opposite_direction = {
-    Direction.LEFT: Direction.RIGHT,
-    Direction.UP: Direction.DOWN,
-    Direction.DOWN: Direction.UP,
-    Direction.RIGHT: Direction.LEFT,
-}
-
-
-TileID = int | str
-SocketSet = set[Socket]
-DirectionalSocketSetMap = dict[Direction, SocketSet]
 Coordinate = tuple[int, int]
 
 
@@ -55,16 +40,6 @@ class TileSuperposition:
     If the `superposition` field is `SUPERPOSITION` or `INVALID`, this field will be `None`.
     Otherwise, this field will contain a valid `Tile` instance.
     """
-
-
-@dataclass
-class TileDefinition:
-    id: TileID
-    socket_sets: DirectionalSocketSetMap
-    prob_weight: float = 1
-    rotatable: bool = False
-    flippable: bool = False
-
 
 @dataclass
 class _InternalTile:
@@ -108,7 +83,7 @@ class _TileSuperposition:
 
         possibilities_to_remove: list[_InternalTile] = []
         for other_possibility in other.get_possibilities():
-            other_socket_set = other_possibility.socket_sets[_opposite_direction[direction]]
+            other_socket_set = other_possibility.socket_sets[opposite_direction[direction]]
             if not socket_sets_are_compatible(other_socket_set, possible_sockets):
                 possibilities_to_remove.append(other_possibility)
 

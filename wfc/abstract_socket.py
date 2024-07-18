@@ -7,3 +7,6 @@ class Socket(ABC):
     @abstractmethod
     def compatible_with(self, other: "Socket") -> bool:
         """Calculate whether this and another socket are compatible or not."""
+
+
+SocketSet = set[Socket]
