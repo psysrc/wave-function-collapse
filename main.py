@@ -1,6 +1,7 @@
 import argparse
 import random
 from gui.view import GUI, UserAction, TileAsset, Rotation
+from helpers.rotation import AllRotations
 from wfc import basic
 from pathlib import Path
 from wfc.basic_socket import BasicSocket, SocketType
@@ -11,7 +12,7 @@ DIR = basic.Direction
 
 
 def grid_data_to_display_data(
-    grid: basic.Grid, graphics_map: dict[basic.Tile, TileAsset], superposition_graphic: TileAsset, invalid_graphic: TileAsset
+    grid: basic.Grid, graphics_map: dict[basic.Tile, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
 ) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
@@ -25,7 +26,8 @@ def grid_data_to_display_data(
             elif tile_superposition.superposition == basic.Superposition.COLLAPSED:
                 assert tile_superposition.tile is not None
 
-                grid_data[row_idx][col_idx] = graphics_map[tile_superposition.tile]
+                asset_path = graphics_map[tile_superposition.tile]
+                grid_data[row_idx][col_idx] = TileAsset(asset_path, rotation=tile_superposition.tile.rotation)
 
             elif tile_superposition.superposition == basic.Superposition.SUPERPOSITION:
                 grid_data[row_idx][col_idx] = superposition_graphic
@@ -57,42 +59,22 @@ def main() -> None:
             "grass2", {DIR.LEFT: {g2, g3}, DIR.UP: {g2, g3}, DIR.DOWN: {g2, g3}, DIR.RIGHT: {g2, g3}}, prob_weight=5
         ),
         basic.TileDefinition("grass3", {DIR.LEFT: {g3}, DIR.UP: {g3}, DIR.DOWN: {g3}, DIR.RIGHT: {g3}}, prob_weight=5),
-        basic.TileDefinition("end_r0", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25),
-        basic.TileDefinition("end_r1", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25),
-        basic.TileDefinition("end_r2", {DIR.LEFT: {g1}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("end_r3", {DIR.LEFT: {g1}, DIR.UP: {g1}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=0.25),
-        basic.TileDefinition("straight_r0", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=10),
-        basic.TileDefinition("straight_r1", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=10),
-        basic.TileDefinition("corner_r0", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25),
-        basic.TileDefinition("corner_r1", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("corner_r2", {DIR.LEFT: {g1}, DIR.UP: {g1}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("corner_r3", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=0.25),
-        basic.TileDefinition("t-junction_r0", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("t-junction_r1", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("t-junction_r2", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=0.25),
-        basic.TileDefinition("t-junction_r3", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=0.25),
+        basic.TileDefinition("end", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25, allowed_rotations=AllRotations),
+        basic.TileDefinition("straight", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=10, allowed_rotations={Rotation.CLOCKWISE}),
+        basic.TileDefinition("corner", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, prob_weight=0.25, allowed_rotations=AllRotations),
+        basic.TileDefinition("t-junction", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, prob_weight=0.25, allowed_rotations=AllRotations),
         basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=1),
     ]
 
-    graphics: dict[basic.Tile, TileAsset] = {
-        basic.Tile("grass1"): TileAsset(Path("graphics/grass-1.png")),
-        basic.Tile("grass2"): TileAsset(Path("graphics/grass-3.png")),
-        basic.Tile("grass3"): TileAsset(Path("graphics/grass-4.png")),
-        basic.Tile("end_r0"): TileAsset(Path("graphics/end.png")),
-        basic.Tile("end_r1"): TileAsset(Path("graphics/end.png"), rotation=Rotation.CLOCKWISE),
-        basic.Tile("end_r2"): TileAsset(Path("graphics/end.png"), rotation=Rotation.HALF),
-        basic.Tile("end_r3"): TileAsset(Path("graphics/end.png"), rotation=Rotation.ANTICLOCKWISE),
-        basic.Tile("straight_r0"): TileAsset(Path("graphics/straight.png")),
-        basic.Tile("straight_r1"): TileAsset(Path("graphics/straight.png"), rotation=Rotation.CLOCKWISE),
-        basic.Tile("corner_r0"): TileAsset(Path("graphics/corner.png")),
-        basic.Tile("corner_r1"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.CLOCKWISE),
-        basic.Tile("corner_r2"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.HALF),
-        basic.Tile("corner_r3"): TileAsset(Path("graphics/corner.png"), rotation=Rotation.ANTICLOCKWISE),
-        basic.Tile("t-junction_r0"): TileAsset(Path("graphics/t-junction.png")),
-        basic.Tile("t-junction_r1"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.CLOCKWISE),
-        basic.Tile("t-junction_r2"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.HALF),
-        basic.Tile("t-junction_r3"): TileAsset(Path("graphics/t-junction.png"), rotation=Rotation.ANTICLOCKWISE),
-        basic.Tile("cross"): TileAsset(Path("graphics/cross.png")),
+    graphics: dict[basic.Tile, Path] = {
+        basic.Tile("grass1"): Path("graphics/grass-1.png"),
+        basic.Tile("grass2"): Path("graphics/grass-3.png"),
+        basic.Tile("grass3"): Path("graphics/grass-4.png"),
+        basic.Tile("end"): Path("graphics/end.png"),
+        basic.Tile("straight"): Path("graphics/straight.png"),
+        basic.Tile("corner"): Path("graphics/corner.png"),
+        basic.Tile("t-junction"): Path("graphics/t-junction.png"),
+        basic.Tile("cross"): Path("graphics/cross.png"),
     }
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
