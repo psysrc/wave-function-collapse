@@ -7,10 +7,6 @@ from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap
 from helpers.direction import Direction, opposite_direction
 
 
-
-Coordinate = tuple[int, int]
-
-
 class Superposition(Enum):
     """Describes the state of a superposition."""
 
@@ -44,6 +40,9 @@ class _InternalTile:
     tile: Tile
     socket_sets: DirectionalSocketSetMap
     probability_weight: float
+
+
+Coordinate = tuple[int, int]
 
 
 class _TileSuperposition:
