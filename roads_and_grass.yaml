@@ -1,0 +1,85 @@
+---
+version: 1
+
+sockets:
+  - name: g1
+    type: symmetric
+
+  - name: g2
+    type: symmetric
+
+  - name: g3
+    type: symmetric
+
+  - name: r
+    type: symmetric
+
+
+tiles:
+  - name: "grass1"
+    prob_weight: 10
+    sockets:
+      left: [g1, g2]
+      up: [g1, g2]
+      down: [g1, g2]
+      right: [g1, g2]
+
+  - name: "grass2"
+    prob_weight: 5
+    sockets:
+      left: [g2, g3]
+      up: [g2, g3]
+      down: [g2, g3]
+      right: [g2, g3]
+
+  - name: "grass3"
+    prob_weight: 5
+    sockets:
+      left: [g3]
+      up: [g3]
+      down: [g3]
+      right: [g3]
+
+  - name: "road_end"
+    allowed_rotations: [clockwise, anticlockwise, half]
+    prob_weight: 1
+    sockets:
+      left: [r]
+      up: [g1]
+      down: [g1]
+      right: [g1]
+
+  - name: "road_straight"
+    allowed_rotations: [clockwise]
+    prob_weight: 10
+    sockets:
+      left: [g1]
+      up: [r]
+      down: [r]
+      right: [g1]
+
+  - name: "road_corner"
+    allowed_rotations: [clockwise, anticlockwise, half]
+    prob_weight: 1
+    sockets:
+      left: [r]
+      up: [r]
+      down: [g1]
+      right: [g1]
+
+  - name: "road_t_junction"
+    allowed_rotations: [clockwise, anticlockwise, half]
+    prob_weight: 1
+    sockets:
+      left: [r]
+      up: [r]
+      down: [g1]
+      right: [r]
+
+  - name: "road_cross"
+    prob_weight: 1
+    sockets:
+      left: [r]
+      up: [r]
+      down: [r]
+      right: [r]

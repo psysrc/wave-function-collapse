@@ -1,0 +1,49 @@
+---
+version: 1
+
+sockets:
+  - name: bg
+    type: symmetric
+
+  - name: bc
+    type: symmetric
+
+  - name: be
+    type: asymmetric
+    counterpart: be_f
+
+
+tiles:
+  - name: "background"
+    prob_weight: 6
+    sockets:
+      left: [bg]
+      up: [bg]
+      down: [bg]
+      right: [bg]
+
+  - name: "block-center"
+    prob_weight: 1
+    sockets:
+      left: [bc]
+      up: [bc]
+      down: [bc]
+      right: [bc]
+
+  - name: "block-edge"
+    prob_weight: 1
+    allowed_rotations: [clockwise, anticlockwise, half]
+    sockets:
+      left: [bc]
+      up: [be]
+      down: [be_f]
+      right: [bg]
+
+  - name: "block-corner"
+    prob_weight: 1
+    allowed_rotations: [clockwise, anticlockwise, half]
+    sockets:
+      left: [be]
+      up: [bg]
+      down: [be_f]
+      right: [bg]
