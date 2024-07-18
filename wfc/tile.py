@@ -17,8 +17,7 @@ class TileDefinition:
     allowed_rotations: set[Rotation] = field(default_factory=lambda: NoRotations)
 
     def __post_init__(self) -> None:
-        if len(self.allowed_rotations) == 0:
-            self.allowed_rotations = NoRotations
+        self.allowed_rotations.add(Rotation.NONE)
 
 
 def rotate_socket_sets(socket_sets: DirectionalSocketSetMap, rotation: Rotation) -> DirectionalSocketSetMap:
