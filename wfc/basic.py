@@ -16,7 +16,7 @@ class Superposition(Enum):
 
 
 @dataclass(frozen=True)
-class Tile:
+class TileDeployment:
     """Describes a tile in a specific position."""
 
     id: TileID
@@ -29,15 +29,15 @@ class TileSuperposition:
 
     superposition: Superposition
 
-    tile: Tile | None
+    tile: TileDeployment | None  # TODO: Make this a list of TileDeployment, and maybe get rid of `superposition`
     """
     If the `superposition` field is `SUPERPOSITION` or `INVALID`, this field will be `None`.
     Otherwise, this field will contain a valid `Tile` instance.
     """
 
 @dataclass
-class _InternalTile:
-    tile: Tile
+class _InternalTileDeployment:
+    tile: TileDeployment
     socket_sets: DirectionalSocketSetMap
     probability_weight: float
 
@@ -46,11 +46,11 @@ Coordinate = tuple[int, int]
 
 
 class _TileSuperposition:
-    def __init__(self, possibilities: list[_InternalTile]) -> None:
+    def __init__(self, possibilities: list[_InternalTileDeployment]) -> None:
         if len(possibilities) == 0:
             raise RuntimeError("Cannot create a superposition containing zero possibilities")
 
-        self._possibilities: list[_InternalTile] = possibilities.copy()
+        self._possibilities: list[_InternalTileDeployment] = possibilities.copy()
 
     def has_collapsed(self) -> bool:
         return len(self._possibilities) == 1
@@ -58,10 +58,10 @@ class _TileSuperposition:
     def is_valid(self) -> bool:
         return len(self._possibilities) > 0
 
-    def get_possibilities(self) -> list[_InternalTile]:
+    def get_possibilities(self) -> list[_InternalTileDeployment]:
         return self._possibilities
 
-    def remove(self, possibility: _InternalTile) -> None:
+    def remove(self, possibility: _InternalTileDeployment) -> None:
         if possibility in self._possibilities:
             self._possibilities.remove(possibility)
 
@@ -78,7 +78,7 @@ class _TileSuperposition:
         for ss in possible_socketsets:
             possible_sockets = possible_sockets.union(ss)
 
-        possibilities_to_remove: list[_InternalTile] = []
+        possibilities_to_remove: list[_InternalTileDeployment] = []
         for other_possibility in other.get_possibilities():
             other_socket_set = other_possibility.socket_sets[opposite_direction[direction]]
             if not socket_sets_are_compatible(other_socket_set, possible_sockets):
@@ -102,7 +102,7 @@ class _TileSuperposition:
     def get_entropy(self) -> int:
         return len(self._possibilities)
 
-    def get_collapsed_state(self) -> _InternalTile:
+    def get_collapsed_state(self) -> _InternalTileDeployment:
         if not self.is_valid():
             raise RuntimeError("Cannot get collapsed state of an invalid supoerposition")
 
@@ -116,13 +116,17 @@ class Grid:
     def __init__(self, grid_size: int, tile_definitions: list[TileDefinition]) -> None:
         self._grid_size = grid_size
 
-        self._tiles: list[_InternalTile] = []
+        self._tiles: list[_InternalTileDeployment] = []
         for tile_def in tile_definitions:
-            self._tiles.append(_InternalTile(Tile(tile_def.id), tile_def.socket_sets, tile_def.prob_weight))
+            self._tiles.extend(self._create_tile_deployments_from_tile_definition(tile_def))
 
         self._tile_superpositions: list[list[_TileSuperposition]] = [
             [_TileSuperposition(self._tiles) for _ in range(grid_size)] for _ in range(grid_size)
         ]
+
+    @staticmethod
+    def _create_tile_deployments_from_tile_definition(tile_defs: TileDefinition) -> list[_InternalTileDeployment]:
+        raise NotImplementedError()
 
     def is_valid(self) -> bool:
         for row in self._tile_superpositions:

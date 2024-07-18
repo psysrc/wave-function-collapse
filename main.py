@@ -12,7 +12,7 @@ DIR = basic.Direction
 
 
 def grid_data_to_display_data(
-    grid: basic.Grid, graphics_map: dict[basic.Tile, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
+    grid: basic.Grid, graphics_map: dict[basic.TileDeployment, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
 ) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
@@ -66,15 +66,15 @@ def main() -> None:
         basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=1),
     ]
 
-    graphics: dict[basic.Tile, Path] = {
-        basic.Tile("grass1"): Path("graphics/grass-1.png"),
-        basic.Tile("grass2"): Path("graphics/grass-3.png"),
-        basic.Tile("grass3"): Path("graphics/grass-4.png"),
-        basic.Tile("end"): Path("graphics/end.png"),
-        basic.Tile("straight"): Path("graphics/straight.png"),
-        basic.Tile("corner"): Path("graphics/corner.png"),
-        basic.Tile("t-junction"): Path("graphics/t-junction.png"),
-        basic.Tile("cross"): Path("graphics/cross.png"),
+    graphics: dict[basic.TileDeployment, Path] = {
+        basic.TileDeployment("grass1"): Path("graphics/grass-1.png"),
+        basic.TileDeployment("grass2"): Path("graphics/grass-3.png"),
+        basic.TileDeployment("grass3"): Path("graphics/grass-4.png"),
+        basic.TileDeployment("end"): Path("graphics/end.png"),
+        basic.TileDeployment("straight"): Path("graphics/straight.png"),
+        basic.TileDeployment("corner"): Path("graphics/corner.png"),
+        basic.TileDeployment("t-junction"): Path("graphics/t-junction.png"),
+        basic.TileDeployment("cross"): Path("graphics/cross.png"),
     }
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
