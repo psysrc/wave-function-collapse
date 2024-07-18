@@ -12,7 +12,7 @@ DIR = basic.Direction
 
 
 def grid_data_to_display_data(
-    grid: basic.Grid, graphics_map: dict[basic.TileDeployment, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
+    grid: basic.Grid, graphics_map: dict[basic.TileID, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
 ) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
@@ -26,7 +26,7 @@ def grid_data_to_display_data(
             elif tile_superposition.superposition == basic.Superposition.COLLAPSED:
                 assert tile_superposition.tile is not None
 
-                asset_path = graphics_map[tile_superposition.tile]
+                asset_path = graphics_map[tile_superposition.tile.id]
                 grid_data[row_idx][col_idx] = TileAsset(asset_path, rotation=tile_superposition.tile.rotation)
 
             elif tile_superposition.superposition == basic.Superposition.SUPERPOSITION:
@@ -66,15 +66,15 @@ def main() -> None:
         basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}, prob_weight=1),
     ]
 
-    graphics: dict[basic.TileDeployment, Path] = {
-        basic.TileDeployment("grass1"): Path("graphics/grass-1.png"),
-        basic.TileDeployment("grass2"): Path("graphics/grass-3.png"),
-        basic.TileDeployment("grass3"): Path("graphics/grass-4.png"),
-        basic.TileDeployment("end"): Path("graphics/end.png"),
-        basic.TileDeployment("straight"): Path("graphics/straight.png"),
-        basic.TileDeployment("corner"): Path("graphics/corner.png"),
-        basic.TileDeployment("t-junction"): Path("graphics/t-junction.png"),
-        basic.TileDeployment("cross"): Path("graphics/cross.png"),
+    graphics: dict[basic.TileID, Path] = {
+        "grass1": Path("graphics/grass-1.png"),
+        "grass2": Path("graphics/grass-3.png"),
+        "grass3": Path("graphics/grass-4.png"),
+        "end": Path("graphics/end.png"),
+        "straight": Path("graphics/straight.png"),
+        "corner": Path("graphics/corner.png"),
+        "t-junction": Path("graphics/t-junction.png"),
+        "cross": Path("graphics/cross.png"),
     }
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))

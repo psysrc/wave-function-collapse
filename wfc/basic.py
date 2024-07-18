@@ -37,9 +37,8 @@ class TileSuperposition:
 
 @dataclass
 class _InternalTileDeployment:
-    tile: TileDeployment
+    tile_deployment: TileDeployment
     socket_sets: DirectionalSocketSetMap
-    probability_weight: float
 
 
 Coordinate = tuple[int, int]
@@ -89,15 +88,13 @@ class _TileSuperposition:
 
         return len(possibilities_to_remove) > 0
 
-    def collapse(self) -> None:
+    def collapse(self, final_state: _InternalTileDeployment) -> None:
         """Collapse the superposition into a single known state."""
 
-        if not self.is_valid() or self.has_collapsed():
-            return
+        if final_state not in self._possibilities:
+            raise RuntimeError("Cannot collapse superposition into a state that is not one of its possibilities")
 
-        weights = [p.probability_weight for p in self._possibilities]
-
-        self._possibilities = random.choices(self._possibilities, weights=weights)
+        self._possibilities = [final_state]
 
     def get_entropy(self) -> int:
         return len(self._possibilities)
@@ -116,6 +113,8 @@ class Grid:
     def __init__(self, grid_size: int, tile_definitions: list[TileDefinition]) -> None:
         self._grid_size = grid_size
 
+        self._tile_definitions = tile_definitions
+
         self._tiles: list[_InternalTileDeployment] = []
         for tile_def in tile_definitions:
             self._tiles.extend(self._create_tile_deployments_from_tile_definition(tile_def))
@@ -125,8 +124,16 @@ class Grid:
         ]
 
     @staticmethod
-    def _create_tile_deployments_from_tile_definition(tile_defs: TileDefinition) -> list[_InternalTileDeployment]:
-        raise NotImplementedError()
+    def _create_tile_deployments_from_tile_definition(tile_def: TileDefinition) -> list[_InternalTileDeployment]:
+        tile_deployments: list[_InternalTileDeployment] = []
+
+        for rotation in tile_def.allowed_rotations:
+            tile_deployments.append(_InternalTileDeployment(
+                TileDeployment(tile_def.id, rotation=rotation),
+                socket_sets=tile_def.socket_sets,
+            ))
+
+        return tile_deployments
 
     def is_valid(self) -> bool:
         for row in self._tile_superpositions:
@@ -158,7 +165,7 @@ class Grid:
                     result[row_idx].append(TileSuperposition(Superposition.INVALID, None))
                 elif tile_superposition.has_collapsed():
                     internal_tile = tile_superposition.get_collapsed_state()
-                    result[row_idx].append(TileSuperposition(Superposition.COLLAPSED, internal_tile.tile))
+                    result[row_idx].append(TileSuperposition(Superposition.COLLAPSED, internal_tile.tile_deployment))
                 else:
                     result[row_idx].append(TileSuperposition(Superposition.SUPERPOSITION, None))
 
@@ -232,7 +239,26 @@ class Grid:
         lowest_entropy_index = random.choice(lowest_entropy_indices)
         return lowest_entropy_index
 
-    def collapse_tile_superposition(self, coordinate: Coordinate) -> bool:
+    def _collapse_tile_superposition(self, coordinate: Coordinate) -> None:
+        tile_superposition = self._get_tile_superposition(coordinate)
+
+        if not tile_superposition.is_valid() or tile_superposition.has_collapsed():
+            return
+
+        current_possibilities = tile_superposition.get_possibilities()
+
+        possible_tile_ids: set[TileID] = {p.tile_deployment.id for p in current_possibilities}
+        possible_tile_definitions: list[TileDefinition] = [d for d in self._tile_definitions if d.id in possible_tile_ids]
+        tile_definition_weights: list[float] = [d.prob_weight for d in self._tile_definitions if d.id in possible_tile_ids]
+
+        final_tile_definition: TileDefinition = random.choices(possible_tile_definitions, weights=tile_definition_weights)[0]
+
+        new_possibilities: list[_InternalTileDeployment] = [p for p in current_possibilities if p.tile_deployment.id == final_tile_definition.id]
+        new_possibility = random.choice(new_possibilities)
+
+        tile_superposition.collapse(new_possibility)
+
+    def collapse_tile_superposition(self, coordinate: Coordinate) -> None:
         """
         Collapse a single tile superposition down to a known state, and propagate the changes to the rest of the grid.
 
@@ -240,7 +266,8 @@ class Grid:
         Returns `False` otherwise, including when the grid is in a completely known state.
         """
 
-        self._get_tile_superposition(coordinate).collapse()
+        self._collapse_tile_superposition(coordinate)
+
         neighbours_to_propagate_to = self._get_valid_neighbours(coordinate)
 
         while len(neighbours_to_propagate_to) > 0:
@@ -260,13 +287,11 @@ class Grid:
                     if new_neighbour != source_coords:
                         neighbours_to_propagate_to[key] = new_neighbour
 
-        return True
-
     def pretty_print_grid_state(self) -> str:
         output: str = ""
         for row in self._tile_superpositions:
             for tile in row:
-                output += f"{[p.tile.id for p in tile.get_possibilities()]}, "
+                output += f"{[p.tile_deployment.id for p in tile.get_possibilities()]}, "
 
             output += "\n"
 
