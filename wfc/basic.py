@@ -109,22 +109,13 @@ class _TileSuperposition:
         possibilities_to_remove: list[_InternalTile] = []
         for other_possibility in other.get_possibilities():
             other_socket_set = other_possibility.socket_sets[_opposite_direction[direction]]
-            if not self._socket_sets_are_compatible(other_socket_set, possible_sockets):
+            if not socket_sets_are_compatible(other_socket_set, possible_sockets):
                 possibilities_to_remove.append(other_possibility)
 
         for p in possibilities_to_remove:
             other.remove(p)
 
         return len(possibilities_to_remove) > 0
-
-    @staticmethod
-    def _socket_sets_are_compatible(first: SocketSet, second: SocketSet) -> bool:
-        for fs in first:
-            for ss in second:
-                if fs.compatible_with(ss):
-                    return True
-
-        return False
 
     def collapse(self) -> None:
         """Collapse the superposition into a single known state."""
@@ -304,3 +295,12 @@ class Grid:
             output += "\n"
 
         return output
+
+
+def socket_sets_are_compatible(first: SocketSet, second: SocketSet) -> bool:
+    for fs in first:
+        for ss in second:
+            if fs.compatible_with(ss):
+                return True
+
+    return False

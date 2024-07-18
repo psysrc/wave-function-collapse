@@ -37,13 +37,12 @@ def grid_data_to_display_data(
 def main() -> None:
     r = BasicSocket("r", SocketType.SYMMETRIC)
     g1 = BasicSocket("g1", SocketType.SYMMETRIC)
-    g1_2 = BasicSocket("g1", SocketType.SYMMETRIC)
     g2 = BasicSocket("g2", SocketType.SYMMETRIC)
     g3 = BasicSocket("g3", SocketType.SYMMETRIC)
 
     tiles: list[basic.TileDefinition] = [
         basic.TileDefinition(
-            "grass1", {DIR.LEFT: {g1_2, g2}, DIR.UP: {g1_2, g2}, DIR.DOWN: {g1_2, g2}, DIR.RIGHT: {g1_2, g2}}, prob_weight=15
+            "grass1", {DIR.LEFT: {g1, g2}, DIR.UP: {g1, g2}, DIR.DOWN: {g1, g2}, DIR.RIGHT: {g1, g2}}, prob_weight=15
         ),
         basic.TileDefinition(
             "grass2", {DIR.LEFT: {g2, g3}, DIR.UP: {g2, g3}, DIR.DOWN: {g2, g3}, DIR.RIGHT: {g2, g3}}, prob_weight=5
