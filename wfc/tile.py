@@ -14,4 +14,3 @@ class TileDefinition:
     socket_sets: DirectionalSocketSetMap
     prob_weight: float = 1
     rotatable: bool = False
-    flippable: bool = False

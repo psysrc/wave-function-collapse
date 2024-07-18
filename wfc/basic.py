@@ -2,7 +2,6 @@ from dataclasses import dataclass
 import random
 from enum import Enum
 from helpers.rotation import Rotation
-from helpers.flip import Flip
 from wfc.abstract_socket import SocketSet
 from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap
 from helpers.direction import Direction, opposite_direction
@@ -26,7 +25,6 @@ class Tile:
 
     id: TileID
     rotation: Rotation = Rotation.NONE
-    flipped: Flip = Flip.NONE
 
 
 @dataclass
