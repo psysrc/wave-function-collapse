@@ -2,19 +2,14 @@ from typing import Any
 import pygame
 from pathlib import Path
 from enum import Enum
+from dataclasses import dataclass
 from helpers.rotation import Rotation
 
 
+@dataclass(frozen=True)
 class TileAsset:
-    def __init__(self, image_path: Path, rotation: Rotation = Rotation.NONE) -> None:
-        self._filepath = image_path
-        self._rotation = rotation
-
-    def get_image_path(self) -> Path:
-        return self._filepath
-
-    def get_rotation(self) -> Rotation:
-        return self._rotation
+    image_path: Path
+    rotation: Rotation = Rotation.NONE
 
 
 class UserAction(Enum):
@@ -53,14 +48,14 @@ class GUI:
                 all_tile_assets.add(gg)
 
         loaded_tile_assets: dict[TileAsset, pygame.Surface] = {
-            asset: pygame.image.load(asset.get_image_path()) for asset in all_tile_assets
+            asset: pygame.image.load(asset.image_path) for asset in all_tile_assets
         }
 
         for row in range(rows):
             for column in range(columns):
                 asset = grid_data[row][column]
                 image = loaded_tile_assets[asset]
-                image = pygame.transform.rotate(image, asset.get_rotation())
+                image = pygame.transform.rotate(image, asset.rotation)
                 image = pygame.transform.scale(image, (cell_width, cell_height))
 
                 rect = pygame.Rect(column * cell_width, row * cell_height, cell_width, cell_height)
