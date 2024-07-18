@@ -11,10 +11,10 @@ class SocketType(Enum):
 
 
 class BasicSocket(Socket):
-    def __init__(self, id: SocketID, type: SocketType, flipped: bool = False) -> None:
+    def __init__(self, id: SocketID, type: SocketType) -> None:
         self._id = id
         self._type = type
-        self._flipped = flipped
+        self._flipped = False
 
     def compatible_with(self, other: Socket) -> bool:
         """Decide if this socket is compatible with another socket or not."""
@@ -35,3 +35,12 @@ class BasicSocket(Socket):
             return self._flipped != other._flipped
 
         raise RuntimeError(f"Couldn't deduce socket compatibility: '{repr(self)}' / '{repr(other)}'")
+
+    def asymmetric_counterpart(self) -> "BasicSocket":
+        if self._type != SocketType.ASYMMETRIC:
+            raise RuntimeError(f"Cannot create asymmetric counterpart of non-asymmetric socket ID {self._id}")
+
+        counterpart = BasicSocket(self._id, self._type)
+        counterpart._flipped = not self._flipped
+
+        return counterpart
