@@ -3,7 +3,7 @@ import random
 from enum import Enum
 from helpers.rotation import Rotation
 from wfc.abstract_socket import SocketSet
-from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap
+from wfc.tile import TileDefinition, TileID, DirectionalSocketSetMap, rotate_socket_sets
 from helpers.direction import Direction, opposite_direction
 
 
@@ -130,7 +130,7 @@ class Grid:
         for rotation in tile_def.allowed_rotations:
             tile_deployments.append(_InternalTileDeployment(
                 TileDeployment(tile_def.id, rotation=rotation),
-                socket_sets=tile_def.socket_sets,
+                socket_sets=rotate_socket_sets(tile_def.socket_sets, rotation),
             ))
 
         return tile_deployments
