@@ -42,9 +42,12 @@ def grid_data_to_display_data(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--rules", required=True)
-    parser.add_argument("-g", "--graphics", required=True)
+    parser.add_argument("-g", "--graphics")
 
     args = parser.parse_args()
+
+    if args.graphics is None:
+        args.graphics = args.rules
 
     random.seed()
     seed = random.randrange(1, 2**32)

@@ -20,25 +20,25 @@ class YamlGraphicsLoader:
 
     def load(self) -> dict[TileID, Path]:
         match self._data:
-            case {"graphics": [*entries]}:
-                return self._load_entries(entries)
+            case {"tiles": [*tiles]}:
+                return self._load_tiles(tiles)
 
             case _:
                 raise RuntimeError("Failed to parse graphics entries")
 
     @staticmethod
-    def _load_entries(entries: list[Any]) -> dict[TileID, Path]:
+    def _load_tiles(tiles: list[Any]) -> dict[TileID, Path]:
         graphics: dict[TileID, Path] = {}
 
-        for entry in entries:
-            match entry:
-                case {"id": id, "path": str(path)}:
+        for tile in tiles:
+            match tile:
+                case {"id": id, "graphic": str(path)}:
                     if not isinstance(id, TileID):
                         raise RuntimeError(f"Entry ID '{id}' is not the expected type {TileID}")
 
                     graphics[id] = Path(path)
 
                 case _:
-                    raise RuntimeError(f"Failed to parse entry: {repr(entry)}")
+                    raise RuntimeError(f"Failed to parse entry: {repr(tile)}")
 
         return graphics
