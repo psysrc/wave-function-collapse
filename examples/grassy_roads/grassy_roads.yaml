@@ -16,7 +16,7 @@ sockets:
 
 tiles:
   - id: "grass1"
-    graphic: "graphics/grass-1.png"
+    graphic: "examples/grassy_roads/graphics/grass-1.png"
     prob_weight: 25
     sockets:
       left: [g1, g2]
@@ -25,7 +25,7 @@ tiles:
       right: [g1, g2]
 
   - id: "grass2"
-    graphic: "graphics/grass-3.png"
+    graphic: "examples/grassy_roads/graphics/grass-3.png"
     prob_weight: 5
     sockets:
       left: [g2, g3]
@@ -34,7 +34,7 @@ tiles:
       right: [g2, g3]
 
   - id: "grass3"
-    graphic: "graphics/grass-4.png"
+    graphic: "examples/grassy_roads/graphics/grass-4.png"
     prob_weight: 5
     sockets:
       left: [g3]
@@ -43,7 +43,7 @@ tiles:
       right: [g3]
 
   - id: "road_end"
-    graphic: "graphics/end.png"
+    graphic: "examples/grassy_roads/graphics/end.png"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -53,7 +53,7 @@ tiles:
       right: [g1]
 
   - id: "road_straight"
-    graphic: "graphics/straight.png"
+    graphic: "examples/grassy_roads/graphics/straight.png"
     allowed_rotations: [clockwise]
     prob_weight: 10
     sockets:
@@ -63,7 +63,7 @@ tiles:
       right: [g1]
 
   - id: "road_corner"
-    graphic: "graphics/corner.png"
+    graphic: "examples/grassy_roads/graphics/corner.png"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -73,7 +73,7 @@ tiles:
       right: [g1]
 
   - id: "road_t_junction"
-    graphic: "graphics/t-junction.png"
+    graphic: "examples/grassy_roads/graphics/t-junction.png"
     allowed_rotations: [clockwise, anticlockwise, half]
     prob_weight: 1
     sockets:
@@ -83,7 +83,7 @@ tiles:
       right: [r]
 
   - id: "road_cross"
-    graphic: "graphics/cross.png"
+    graphic: "examples/grassy_roads/graphics/cross.png"
     prob_weight: 1
     sockets:
       left: [r]

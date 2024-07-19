@@ -56,8 +56,8 @@ def main() -> None:
 
     tile_graphics = YamlGraphicsLoader(Path(args.graphics)).load()
 
-    superposition_graphic = TileAsset(Path("graphics/unknown.png"))
-    invalid_graphic = TileAsset(Path("graphics/invalid.png"))
+    superposition_graphic = TileAsset(Path("examples/unknown.png"))
+    invalid_graphic = TileAsset(Path("examples/invalid.png"))
 
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
