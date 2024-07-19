@@ -1,15 +1,10 @@
 import argparse
 import random
 from graphics_loaders.yaml import YamlGraphicsLoader
-from gui.view import GUI, UserAction, TileAsset, Rotation
-from helpers.rotation import AllRotations
+from gui.view import GUI, UserAction, TileAsset
 from wfc import basic
 from pathlib import Path
-from wfc.basic_socket import BasicSocket, SocketType
 from rule_loaders.yaml import YamlRulesLoader
-
-
-DIR = basic.Direction
 
 
 def grid_data_to_display_data(
