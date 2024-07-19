@@ -27,7 +27,7 @@ class GUI:
         self._screen_height = screen_height
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
 
-        self._max_fps = 30
+        self._max_fps = 60
         self._clock = pygame.time.Clock()
 
     def display_grid(self, grid_data: list[list[TileAsset]]) -> None:
