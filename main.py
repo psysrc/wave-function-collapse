@@ -39,43 +39,12 @@ def grid_data_to_display_data(
 
 
 def main() -> None:
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("-r", "--rules", required=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-r", "--rules", required=True)
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
-    # tile_definitions = YamlLoader(args.rules).load()
-
-    r = BasicSocket("r", SocketType.SYMMETRIC)
-    g1 = BasicSocket("g1", SocketType.SYMMETRIC)
-    g2 = BasicSocket("g2", SocketType.SYMMETRIC)
-    g3 = BasicSocket("g3", SocketType.SYMMETRIC)
-
-    tile_definitions: list[basic.TileDefinition] = [
-        basic.TileDefinition(
-            "grass1", {DIR.LEFT: {g1, g2}, DIR.UP: {g1, g2}, DIR.DOWN: {g1, g2}, DIR.RIGHT: {g1, g2}}, prob_weight=30,
-        ),
-        basic.TileDefinition(
-            "grass2", {DIR.LEFT: {g2, g3}, DIR.UP: {g2, g3}, DIR.DOWN: {g2, g3}, DIR.RIGHT: {g2, g3}}, prob_weight=10,
-        ),
-        basic.TileDefinition("grass3", {DIR.LEFT: {g3}, DIR.UP: {g3}, DIR.DOWN: {g3}, DIR.RIGHT: {g3}}, prob_weight=10),
-        basic.TileDefinition("end", {DIR.LEFT: {r}, DIR.UP: {g1}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, allowed_rotations=AllRotations),
-        basic.TileDefinition("straight", {DIR.LEFT: {g1}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {g1}}, prob_weight=15, allowed_rotations={Rotation.CLOCKWISE}),
-        basic.TileDefinition("corner", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {g1}}, allowed_rotations=AllRotations),
-        basic.TileDefinition("t-junction", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {g1}, DIR.RIGHT: {r}}, allowed_rotations=AllRotations),
-        basic.TileDefinition("cross", {DIR.LEFT: {r}, DIR.UP: {r}, DIR.DOWN: {r}, DIR.RIGHT: {r}}),
-    ]
-
-    graphics: dict[basic.TileID, Path] = {
-        "grass1": Path("graphics/grass-1.png"),
-        "grass2": Path("graphics/grass-3.png"),
-        "grass3": Path("graphics/grass-4.png"),
-        "end": Path("graphics/end.png"),
-        "straight": Path("graphics/straight.png"),
-        "corner": Path("graphics/corner.png"),
-        "t-junction": Path("graphics/t-junction.png"),
-        "cross": Path("graphics/cross.png"),
-    }
+    tile_definitions = YamlLoader(Path(args.rules)).load()
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
     invalid_graphic = TileAsset(Path("graphics/invalid.png"))
@@ -92,6 +61,17 @@ def main() -> None:
     seed = random.randrange(1, 2**32)
     print(f"Using seed '{seed}'")
     random.seed(seed)
+
+    graphics: dict[basic.TileID, Path] = {
+        "grass1": Path("graphics/grass-1.png"),
+        "grass2": Path("graphics/grass-3.png"),
+        "grass3": Path("graphics/grass-4.png"),
+        "road_end": Path("graphics/end.png"),
+        "road_straight": Path("graphics/straight.png"),
+        "road_corner": Path("graphics/corner.png"),
+        "road_t_junction": Path("graphics/t-junction.png"),
+        "road_cross": Path("graphics/cross.png"),
+    }
 
     while True:
         events = gui.handle_events()
