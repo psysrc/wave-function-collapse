@@ -5,7 +5,7 @@ from helpers.rotation import AllRotations
 from wfc import basic
 from pathlib import Path
 from wfc.basic_socket import BasicSocket, SocketType
-from rule_loaders.yaml_loader import YamlLoader
+from rule_loaders.yaml import YamlRulesLoader
 
 
 DIR = basic.Direction
@@ -44,7 +44,7 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    tile_definitions = YamlLoader(Path(args.rules)).load()
+    tile_definitions = YamlRulesLoader(Path(args.rules)).load()
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
     invalid_graphic = TileAsset(Path("graphics/invalid.png"))

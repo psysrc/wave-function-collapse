@@ -7,7 +7,7 @@ from helpers.rotation import Rotation
 from helpers.direction import Direction
 
 
-class YamlLoader:
+class YamlRulesLoader:
     _supported_file_versions = [1]
 
     def __init__(self, yaml_file: Path) -> None:
@@ -45,13 +45,13 @@ class YamlLoader:
         for tile_data in tiles:
             match tile_data:
                 case {"id": id, "sockets": socket_sets, **extra_data}:
-                    socket_sets = YamlLoader._load_tile_socket_sets(socket_sets, socket_defs)
+                    socket_sets = YamlRulesLoader._load_tile_socket_sets(socket_sets, socket_defs)
 
                     extras = {}
                     if "prob_weight" in extra_data:
                         extras["prob_weight"] = float(extra_data["prob_weight"])
                     if "allowed_rotations" in extra_data:
-                        extras["allowed_rotations"] = YamlLoader._load_allowed_rotations(extra_data["allowed_rotations"])
+                        extras["allowed_rotations"] = YamlRulesLoader._load_allowed_rotations(extra_data["allowed_rotations"])
 
                     tile_definition = TileDefinition(id=id, socket_sets=socket_sets, **extras)
 
