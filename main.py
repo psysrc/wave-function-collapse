@@ -1,5 +1,6 @@
 import argparse
 import random
+from graphics_loaders.yaml import YamlGraphicsLoader
 from gui.view import GUI, UserAction, TileAsset, Rotation
 from helpers.rotation import AllRotations
 from wfc import basic
@@ -12,7 +13,7 @@ DIR = basic.Direction
 
 
 def grid_data_to_display_data(
-    grid: basic.Grid, graphics_map: dict[basic.TileID, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
+    grid: basic.Grid, tile_graphics: dict[basic.TileID, Path], superposition_graphic: TileAsset, invalid_graphic: TileAsset
 ) -> list[list[TileAsset]]:
     grid_size = grid.get_grid_size()
 
@@ -26,7 +27,7 @@ def grid_data_to_display_data(
             elif tile_superposition.superposition == basic.Superposition.COLLAPSED:
                 assert tile_superposition.tile is not None
 
-                asset_path = graphics_map[tile_superposition.tile.id]
+                asset_path = tile_graphics[tile_superposition.tile.id]
                 grid_data[row_idx][col_idx] = TileAsset(asset_path, rotation=tile_superposition.tile.rotation)
 
             elif tile_superposition.superposition == basic.Superposition.SUPERPOSITION:
@@ -41,10 +42,21 @@ def grid_data_to_display_data(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--rules", required=True)
+    parser.add_argument("-g", "--graphics", required=True)
 
     args = parser.parse_args()
 
+    random.seed()
+    seed = random.randrange(1, 2**32)
+    print(f"Using seed '{seed}'")
+    random.seed(seed)
+
     tile_definitions = YamlRulesLoader(Path(args.rules)).load()
+
+    grid_size = 32
+    grid = basic.Grid(grid_size, tile_definitions)
+
+    tile_graphics = YamlGraphicsLoader(Path(args.graphics)).load()
 
     superposition_graphic = TileAsset(Path("graphics/unknown.png"))
     invalid_graphic = TileAsset(Path("graphics/invalid.png"))
@@ -52,26 +64,7 @@ def main() -> None:
     (screen_width, screen_height) = (800, 800)
     gui = GUI(screen_width, screen_height)
 
-    grid_size = 32
-    grid = basic.Grid(grid_size, tile_definitions)
-
     collapse_slowly = False
-
-    random.seed()
-    seed = random.randrange(1, 2**32)
-    print(f"Using seed '{seed}'")
-    random.seed(seed)
-
-    graphics: dict[basic.TileID, Path] = {
-        "grass1": Path("graphics/grass-1.png"),
-        "grass2": Path("graphics/grass-3.png"),
-        "grass3": Path("graphics/grass-4.png"),
-        "road_end": Path("graphics/end.png"),
-        "road_straight": Path("graphics/straight.png"),
-        "road_corner": Path("graphics/corner.png"),
-        "road_t_junction": Path("graphics/t-junction.png"),
-        "road_cross": Path("graphics/cross.png"),
-    }
 
     while True:
         events = gui.handle_events()
@@ -105,7 +98,7 @@ def main() -> None:
             if tile_coordinate is not None:
                 grid.collapse_tile_superposition(tile_coordinate)
 
-        display_data = grid_data_to_display_data(grid, graphics, superposition_graphic, invalid_graphic)
+        display_data = grid_data_to_display_data(grid, tile_graphics, superposition_graphic, invalid_graphic)
         gui.display_grid(display_data)
 
 

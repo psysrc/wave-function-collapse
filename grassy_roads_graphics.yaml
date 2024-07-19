@@ -1,0 +1,27 @@
+---
+version: 1
+
+graphics:
+  - id: "grass1"
+    path: "graphics/grass-1.png"
+
+  - id: "grass2"
+    path: "graphics/grass-3.png"
+
+  - id: "grass3"
+    path: "graphics/grass-4.png"
+
+  - id: "road_end"
+    path: "graphics/end.png"
+
+  - id: "road_straight"
+    path: "graphics/straight.png"
+
+  - id: "road_corner"
+    path: "graphics/corner.png"
+
+  - id: "road_t_junction"
+    path: "graphics/t-junction.png"
+
+  - id: "road_cross"
+    path: "graphics/cross.png"
