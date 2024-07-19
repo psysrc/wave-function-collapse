@@ -1,0 +1,66 @@
+---
+version: 1
+
+sockets:
+  - id: background
+    type: symmetric
+
+  - id: block
+    type: symmetric
+
+  - id: block-edge
+    type: asymmetric
+    counterpart: block-edge_f
+
+  - id: impurity
+    type: asymmetric
+    counterpart: impurity_f
+
+tiles:
+  - id: background
+    graphic: "examples/abstract/graphics/white.png"
+    prob_weight: 5
+    sockets:
+      left: [background]
+      up: [background]
+      down: [background]
+      right: [background]
+
+  - id: block-center
+    graphic: "examples/abstract/graphics/purple.png"
+    prob_weight: 1
+    sockets:
+      left: [block]
+      up: [block]
+      down: [block]
+      right: [block]
+
+  - id: block-edge
+    graphic: "examples/abstract/graphics/purple-edge.png"
+    prob_weight: 1
+    allowed_rotations: [clockwise, anticlockwise, half]
+    sockets:
+      left: [block]
+      up: [block-edge]
+      down: [block-edge_f]
+      right: [background]
+
+  - id: block-corner
+    graphic: "examples/abstract/graphics/purple-corner.png"
+    prob_weight: 1
+    allowed_rotations: [clockwise, anticlockwise, half]
+    sockets:
+      left: [block-edge]
+      up: [background]
+      down: [block-edge_f]
+      right: [background]
+
+  - id: impurity
+    graphic: "examples/abstract/graphics/impurity.png"
+    prob_weight: 1
+    allowed_rotations: [clockwise, anticlockwise, half]
+    sockets:
+      left: [block]
+      up: [block]
+      down: [impurity_f]
+      right: [impurity]
