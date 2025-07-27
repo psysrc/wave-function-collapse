@@ -3,13 +3,17 @@
 `wfc` is a Python implementation of the Wave Function Collapse algorithm.
 It also comes with a basic GUI for displaying 2D grids of tiles, and a rule parser for providing tile-socket rules via YAML.
 
-<img src="docs/road_1.png" alt="drawing" width="200"/>
-<img src="docs/road_2.png" alt="drawing" width="200"/>
-<img src="docs/road_3.png" alt="drawing" width="200"/>
+<p>
+    <img src="docs/road_1.png" alt="drawing" width="200"/>
+    <img src="docs/road_2.png" alt="drawing" width="200"/>
+    <img src="docs/road_3.png" alt="drawing" width="200"/>
+</p>
 
-<img src="docs/abstract_1.png" alt="drawing" width="200"/>
-<img src="docs/abstract_2.png" alt="drawing" width="200"/>
-<img src="docs/abstract_3.png" alt="drawing" width="200"/>
+<p>
+    <img src="docs/abstract_1.png" alt="drawing" width="200"/>
+    <img src="docs/abstract_2.png" alt="drawing" width="200"/>
+    <img src="docs/abstract_3.png" alt="drawing" width="200"/>
+</p>
 
 ## What is Wave Function Collapse?
 
